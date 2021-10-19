@@ -4,7 +4,7 @@
   "description": "This is template for microservices in node.js.",
   "main": "server.js",
   "scripts": {
-    "start": "./node_modules/babel-cli/bin/babel-node.js --presets node8 ./server.js",
+    "start": "node ./node_modules/babel-cli/bin/babel-node.js --presets node8 ./server.js",
     "test": "forever ./node_modules/babel-cli/bin/babel-node.js --presets node8 ./server.js",
     "nodemon": "nodemon ./node_modules/babel-cli/bin/babel-node.js --presets node8 ./server.js"
   },
@@ -23,6 +23,7 @@
     "moment": "^2.27.0",
     "mongodb": "^3.3.2",
     "mongoose": "^5.7.1",
+    "mongoose-sequence": "^5.3.1",
     "morgan": "^1.9.1",
     "nodemon": "^1.19.2",
     "path": "^0.12.7",

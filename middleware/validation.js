@@ -8,6 +8,17 @@ module.exports = {
       password: yup.string().min(8).required()
     })
     await validate(schema, req.body, res, next)
+  },
+
+ validateSignUp: async (req, res, next) => {
+
+  const schema = yup.object().shape({
+  
+  email: yup.string().required(),
+  password: yup.string().required().matches("^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
+  });
+  await validate(schema, req.body, res, next);
+  
   }
 }
 
