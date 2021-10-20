@@ -55,14 +55,9 @@ export default class Manager {
           httpConstants.RESPONSE_CODES.FORBIDDEN
         );
 
-      // requestData["name"] = `${
-      //   requestData.userName ? requestData.Name : ""
-      // } ${requestData.lastName ? requestData.lastName : ""}`;
-
       let requestObj = {
         connection: Config.AUTH0_CONNECTION,
         email: requestData.email,
-        // userName: requestData.userName,
         password: requestData.password,
       };
 
@@ -86,7 +81,7 @@ export default class Manager {
       if ((signupResponse && signupResponse.error) || signupResponse.statusCode)
         throw signupResponse.message || apiFailureMessage.USER_CREATE_AUTH0;
 
-      // requestData["userId"] = signupResponse.user_id;
+      requestData["userId"] = signupResponse.user_id;
 
       return requestData;
     } catch (error) {

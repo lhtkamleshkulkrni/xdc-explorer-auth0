@@ -1,12 +1,9 @@
 import Utils from "../../utils";
 import AuthBLManager from "../auth0/manager";
-import UserSchema from "../../models/user"
-
+import UserSchema from "../../models/user";
 
 import {
   apiFailureMessage,
-  apiSuccessMessage,
-  genericConstants,
   httpConstants,
 } from "../../common/constants";
 
@@ -30,17 +27,17 @@ export default class UserController {
         );
       }
 
-      let userModel = new UserSchema(requestData);
-
-      let resObj = await userModel.save();
-
-      // let userRes = await resObj.save();
-
-      // requestData["user_id"] = userRes.userId;
-
       const [error, addUserRes] = await Utils.parseResponse(
         new AuthBLManager().signUp(requestData)
       );
+
+      requestData["userId"] = addUserRes.userId;
+
+      console.log("data", requestData); 
+
+      let userModel = new UserSchema(requestData);
+
+      let userRes = await userModel.save()
 
       if (error)
         throw Utils.error(
@@ -49,7 +46,7 @@ export default class UserController {
           httpConstants.RESPONSE_CODES.FORBIDDEN
         );
 
-      return addUserRes;
+      return userRes;
     } catch (error) {
       throw error;
     }

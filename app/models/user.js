@@ -1,14 +1,11 @@
 import mongoose from "mongoose";
 
-// const AutoIncrement = require("mongoose-sequence")(mongoose);
-
 let Schema = mongoose.Schema;
 let UserSchema = new Schema({
   userId: { type: String, default: "" },
   userName: { type: String, default: "" },
   email: { type: String, default: "" },
   password: { type: String, default: "" },
-  confirmPassword: { type: String, default: "" },
 
   status: {
     type: String,
@@ -52,6 +49,5 @@ UserSchema.static({
   },
 });
 
-// UserSchema.plugin(AutoIncrement, { inc_field: "blum", start_seq: 10000 });
 
-export default mongoose.model("sign-up", UserSchema);
+export default mongoose.model("xin-users", UserSchema);

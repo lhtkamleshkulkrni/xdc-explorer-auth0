@@ -7,7 +7,6 @@ import {
   httpConstants,
 } from "../../common/constants";
 
-
 export default class UserController {
   async signUp(request, response) {
     try {
