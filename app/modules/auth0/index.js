@@ -5,9 +5,7 @@ import {
   apiSuccessMessage,
   httpConstants,
 } from "../../common/constants";
-
-
-export default class Index {
+class Index {
   async signUp(request, response) {
     try {
       lhtLog("Inside signup", "signup", request.body, 0, "");
@@ -36,3 +34,6 @@ export default class Index {
     }
   }
 }
+
+
+export default Index
