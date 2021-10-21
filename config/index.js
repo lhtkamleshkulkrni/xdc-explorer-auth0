@@ -21,4 +21,4 @@ module.exports = {
   test: extend(test, defaults),
   production: extend(production, defaults),
   local: extend(local, defaults)
-}[process.env.NODE_ENV || 'local']
+}[process.env.NODE_ENV || 'development']
