@@ -16,10 +16,13 @@ export default class Manager {
         const headers = {
             "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON,
             Authorization: `Bearer ${accessToken}`
+
         }
+    
         const userInfoRes = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.AUTH0_DOMAIN, "userinfo", {}, headers).catch(err => {
             throw err;
         });
+        console.log(userInfoRes)
         return userInfoRes;
     }
 
@@ -49,4 +52,32 @@ export default class Manager {
                 httpConstants.RESPONSE_CODES.FORBIDDEN);
         return accessTokenResponse.access_token;
     }
+
+    forgotPassword = async (requestData) => {
+        try {
+            if (!requestData || Object.keys(requestData).length < 1 || !requestData.email)
+                throw apiFailureMessage.INVALID_PARAMS;
+
+            let user = await UserModel.findOne({ email: requestData.email })
+            if (!user) {
+                throw apiFailureMessage.USER_NOT_EXISTS
+            }
+            const headers = { "content-type": "application/json" };
+            let requestObj = {
+                "client_id": Config.AUTH0_MANAGEMENT_API_CLIENT_ID,
+                "connection": Config.AUTH0_CONNECTION,
+                "email": requestData.email,
+            }
+
+            let forgotPassResponse = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.AUTH0_DOMAIN, `dbconnections/change_password`, requestObj, headers);
+            console.log("forgotPassResponse===", forgotPassResponse);
+
+            if (forgotPassResponse && forgotPassResponse.error || forgotPassResponse.statusCode)
+                throw Utils.error({}, forgotPassResponse.error || apiFailureMessage.RESET_PASSWORD_AUTH0, httpConstants.RESPONSE_CODES.FORBIDDEN);
+
+            return { message: forgotPassResponse };
+        } catch (error) {
+            throw error
+        }
+    };
 }

@@ -12,6 +12,6 @@ module.exports = (app) => {
     /**
      * route definition
      */
-    app.get("/test-route", ValidationManger.validateUserLogin, new TestModule().testRoute);
-    app.post('/login',ValidationManger.validateUserLogin, new AuthenticationController().signIn);
+    app.post('/sign-in',ValidationManger.validateUserLogin, new AuthenticationController().signIn);
+    app.post("/forgot-password",ValidationManger.validateEmail, new AuthenticationController().forgotPassword);
 };

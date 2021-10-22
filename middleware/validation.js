@@ -8,8 +8,15 @@ module.exports = {
       password: yup.string().min(8).required()
     })
     await validate(schema, req.body, res, next)
-  }
+  },
+  validateEmail: async (req, res, next) => {
+    const schema = yup.object().shape({
+      email: yup.string().email().required(),
+    });
+    await validate(schema, req.body, res, next);
+  },
 }
+
 
 const validate = async (schema, reqData, res, next) => {
   try {
