@@ -2,7 +2,8 @@ export const httpConstants = {
   METHOD_TYPE: {
     POST: 'POST',
     GET: 'GET',
-    PUT: 'PUT'
+    PUT: 'PUT',
+    PATCH: 'PATCH'
   },
   HEADER_TYPE: {
     URL_ENCODED: 'application/x-www-form-urlencoded',
@@ -66,7 +67,8 @@ export const genericConstants = {
 }
 
 export const apiSuccessMessage = {
-  FETCH_SUCCESS: 'Information fetched successfully'
+  FETCH_SUCCESS: 'Information fetched successfully',
+  USER_UPDATE_SUCCESS:'user updated successfully'
 }
 
 export const apiEndpoints = {
@@ -76,6 +78,7 @@ export const apiEndpoints = {
 export const apiFailureMessage = {
   INVALID_PARAMS: 'Invalid Parameters',
   INVALID_REQUEST: 'Invalid Request',
+  UPDATE_USER: 'Unable to update user',
   INVALID_SESSION_TOKEN: 'Invalid session token',
   INTERNAL_SERVER_ERROR: 'Internal server Error',
   BAD_REQUEST: 'Bad Request!',
