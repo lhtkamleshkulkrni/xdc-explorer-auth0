@@ -5,7 +5,7 @@ import {apiSuccessMessage, httpConstants} from "../../common/constants";
 export default class AuthenticationController{
   async signUp(request, response) {
     try {
-      lhtLog("Inside signup", "signup", request.body, 0, "");
+      
 
       const [error, getRes] = await Utils.parseResponse(
         new BlManager().signUp(request.body)
@@ -47,4 +47,28 @@ export default class AuthenticationController{
                 {}, err && err.message ? err.message : apiFailureMessage.SERVER_ERROR, httpConstants.RESPONSE_STATUS.FAILURE, err && err.code ? err.code : httpConstants.RESPONSE_CODES.NOT_FOUND);
         }
     }
+    async changeEmail(request, response) {
+      try {
+          const [error, getRes] = await Utils.parseResponse(new BlManager().changeEmail(request.body));
+          if (!getRes) return Utils.handleError(error, request, response);
+          return Utils.response(response, getRes, apiSuccessMessage.EMAIL_UPDATED_SUCCESS, httpConstants.RESPONSE_STATUS.SUCCESS, httpConstants.RESPONSE_CODES.OK);
+      } catch (err) {
+          Utils.response(response,
+              {}, err && err.message ? err.message : apiFailureMessage.SERVER_ERROR, httpConstants.RESPONSE_STATUS.FAILURE, err && err.code ? err.code : httpConstants.RESPONSE_CODES.NOT_FOUND);
+      }
+  }
+  async changePassword(request, response) {
+    try {
+        //lhtLog("Inside changePassword", 'changePassword', request.body, 0, "");
+        const [error, getRes] = await Utils.parseResponse(
+            new BlManager().changePassword(request.body)
+        );
+        if (!getRes) return Utils.handleError(error, request, response);
+        return Utils.response(response, getRes, apiSuccessMessage.EMAIL_UPDATED_SUCCESS, httpConstants.RESPONSE_STATUS.SUCCESS, httpConstants.RESPONSE_CODES.OK);
+    } catch (err) {
+        Utils.response(response,
+            {}, err && err.message ? err.message : apiFailureMessage.SERVER_ERROR, httpConstants.RESPONSE_STATUS.FAILURE, err && err.code ? err.code : httpConstants.RESPONSE_CODES.NOT_FOUND);
+    }
+}
+
 }

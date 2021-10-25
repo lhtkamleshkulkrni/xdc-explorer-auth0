@@ -16,4 +16,6 @@ module.exports = (app) => {
     app.post('/sign-in',ValidationManger.validateUserLogin, new AuthenticationController().signIn);
     app.post("/forgot-password",ValidationManger.validateEmail, new AuthenticationController().forgotPassword);
     app.post('/update-user', new UserController().updateUser);
+    app.post("/changeEmail", new AuthenticationController().changeEmail);
+    app.post("/change-password", new AuthenticationController().changePassword);
 };

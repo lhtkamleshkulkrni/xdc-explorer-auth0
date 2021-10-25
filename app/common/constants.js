@@ -68,7 +68,8 @@ export const genericConstants = {
 
 export const apiSuccessMessage = {
   FETCH_SUCCESS: 'Information fetched successfully',
-  USER_UPDATE_SUCCESS:'user updated successfully'
+  USER_UPDATE_SUCCESS:'user updated successfully',
+  EMAIL_UPDATED_SUCCESS: 'email changed successfully',
 }
 
 export const apiEndpoints = {
@@ -85,5 +86,6 @@ export const apiFailureMessage = {
   DEVICE_ID_OR_SESSION_TOKEN_EMPTY: 'Device id or session token can\'t be empty or null',
   SESSION_GENERATION: 'Unable to generate session!',
   SESSION_EXPIRED: 'Session Expired!',
+  RESET_PASSWORD_AUTH0:'reset password successfully',
   USER_NOT_EXISTS:'user does not exist'
 }

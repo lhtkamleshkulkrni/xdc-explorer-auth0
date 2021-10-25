@@ -19,9 +19,10 @@ async updateUser(request) {
       }
       let auth0Req = {}
       
-      if (request.userName) {
-        auth0Req['nickname'] = request.userName
-        updateObj['userName'] = request.userName
+      if (request.name) {
+        auth0Req['given_name'] = request.name
+        auth0Req['name'] = request.name
+        updateObj['userName'] = request.name
       }
       if (request.profilePic)
         updateObj['profilePic'] = request.profilePic
