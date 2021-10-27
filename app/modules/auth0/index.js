@@ -59,7 +59,7 @@ export default class AuthenticationController{
   }
   async changePassword(request, response) {
     try {
-        //lhtLog("Inside changePassword", 'changePassword', request.body, 0, "");
+        
         const [error, getRes] = await Utils.parseResponse(
             new BlManager().changePassword(request.body)
         );

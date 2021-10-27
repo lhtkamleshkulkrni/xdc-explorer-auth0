@@ -8,21 +8,24 @@ import Utils from "../../utils";
 
 
 export default class Manager {
-    async getAccessToken(email,password) {
-         const data = {
-            grant_type: 'client_credentials',
-            
-            domain: Config.AUTH0_DOMAIN,
-            client_id: Config.AUTH0_MANAGEMENT_API_CLIENT_ID,
-            client_secret: Config.AUTH0_MANAGEMENT_API_SECRET,
-            audience: Config.AUTH0_MANAGEMENT_BASEURL,
-            // redirectUri: "",
-            // scope: Config.AUTH0_SCOPE,
-            // responseType: Config.AUTH0_RESPONSE_TYPE
-            
+    
 
-        }
-       // {"client_id":"tLlSmfkdd53hvHPORl7D9MHFPdAxbcsn","client_secret":"00_CDBuwB4HpRAGVwA4gnpbq0_Uc4fw8OuceEWys-LSl5PyTpQUFAjPJjr1T28SK","audience":"https://xdcnetwork.us.auth0.com/api/v2/","grant_type":"client_credentials"}
+    async getAccessTokenSignIn(email, password) {
+        const data = {
+             grant_type: 'password',
+            username: email,
+             password: password,
+            domain: Config.AUTH0_DOMAIN,
+            client_id: Config.AUTH0_CLIENT_ID,
+            client_secret: Config.AUTH0_CLIENT_SECRET,
+            audience: Config.AUTH0_MANAGEMENT_BASEURL,
+            redirectUri: "",
+            scope: Config.AUTH0_SCOPE,
+            responseType: Config.AUTH0_RESPONSE_TYPE
+     }
+
+    
+       
         const headers = {
             "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON
         }
@@ -37,57 +40,80 @@ export default class Manager {
         return accessTokenResponse.access_token;
     }
 
-    // async signIn(requestData) {
-    //     if(!request || !requestData.email || !requestData.password)
-    //         throw {message:"email and password are required"}
-    //     const accessToken = await this.getAccessToken(requestData.email, requestData.password).catch(err => {
-    //         throw err
-    //     });
-    //     console.log(accessToken)
-    //     const headers = {
-    //         "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON,
-    //         Authorization: `Bearer ${accessToken}`
-
-    //     }
     
-    //     const userInfoRes = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.AUTH0_DOMAIN, "userinfo", {}, headers).catch(err => {
-    //         throw err;
-    //     });
-    //     console.log(userInfoRes)
-    //     return userInfoRes;
-    // }
 
-    signIn = async (username, password) => {
-        let accessToken = await this.getAccessToken();
-        const headers = {
-            "Authorization": `Bearer ${accessToken}`,
-            "content-type": "application/json"
-        };
-        const token_body = {
-            realm: Config.AUTH0_CONNECTION,
+    getAccessToken = async () => {
+        const data = {        
+            grant_type: "client_credentials",
             client_id: Config.AUTH0_CLIENT_ID,
-            scope: Config.AUTH0_SCOPE,
-            grant_type: "password",
-            username,
-            password
+            client_secret: Config.AUTH0_CLIENT_SECRET,
+            audience: Config.AUTH0_MANAGEMENT_BASEURL,
         };
-        const headers = { "content-type": "application/json" };
-        let accessTokenResponse = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.AUTH0_DOMAIN, 'oauth/token', token_body, headers);
-        if (accessTokenResponse && (accessTokenResponse.error || accessTokenResponse.error_description))
-            throw Utils.error({}, accessTokenResponse.error_description || apiFailureMessage.INVALID_PARAMS,
-                httpConstants.RESPONSE_CODES.FORBIDDEN);
+       
+        const headers = {
+            "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON
+        }
+        const accessTokenResponse = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.AUTH0_DOMAIN, "oauth/token",data, headers).catch(err => {
+            throw err;
+        });
+       console.log(accessTokenResponse)
 
-        return accessTokenResponse
+        if (accessTokenResponse && (accessTokenResponse.error || accessTokenResponse.error_description))
+            throw UtilMethods.errorResponse({}, accessTokenResponse.error_description || apiFailureMessage.INVALID_PARAMS,
+                httpConstants.RESPONSE_CODES.FORBIDDEN);
+        return accessTokenResponse.access_token;
+    }
+
+    getManagementAccessToken = async () => {
+        const data = {        
+            grant_type: "client_credentials",
+            client_id: Config.AUTH0_MANAGEMENT_API_CLIENT_ID,
+            client_secret: Config.AUTH0_MANAGEMENT_API_SECRET,
+            audience: Config.AUTH0_MANAGEMENT_BASEURL,
+        };
+       
+        const headers = {
+            "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON
+        }
+        const accessTokenResponse = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.AUTH0_DOMAIN, "oauth/token",data, headers).catch(err => {
+            throw err;
+        });
+       console.log(accessTokenResponse)
+
+        if (accessTokenResponse && (accessTokenResponse.error || accessTokenResponse.error_description))
+            throw UtilMethods.errorResponse({}, accessTokenResponse.error_description || apiFailureMessage.INVALID_PARAMS,
+                httpConstants.RESPONSE_CODES.FORBIDDEN);
+        return accessTokenResponse.access_token;
+    }
+
+    async signIn(request) {
+        if(!request || !request.email || !request.password)
+            throw {message:"email and password are required"}
+        const accessToken = await this.getAccessTokenSignIn(request.email, request.password).catch(err => {
+            throw err
+        });
+        console.log("accseeewes",accessToken)
+        const headers = {
+            "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON,
+            Authorization: `Bearer ${accessToken}`
+        }
+        const userInfoRes = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.AUTH0_DOMAIN, "userinfo", {}, headers).catch(err => {
+            throw err;
+        });
+        return userInfoRes;
     }
     
+    
 
     
-    updateUser = async (request) => {
-        let accessToken = await this.getAccessToken();
+     updateUser = async (request) => {
+        let accessToken = await this.getManagementAccessToken();
         const headers = {
             "Authorization": `Bearer ${accessToken}`,
             "content-type": "application/json"
         };
+
+        
         let userId = request.userId
         delete request.userId
         let updateRes = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.PATCH, Config.AUTH0_DOMAIN, `api/v2/users/${userId}`, request, headers);
@@ -108,7 +134,8 @@ export default class Manager {
             }
             const headers = { "content-type": "application/json" };
             let requestObj = {
-                "client_id": Config.AUTH0_MANAGEMENT_API_CLIENT_ID,
+               
+                "client_id": Config.AUTH0_CLIENT_ID,
                 "connection": Config.AUTH0_CONNECTION,
                 "email": request.email,
             }

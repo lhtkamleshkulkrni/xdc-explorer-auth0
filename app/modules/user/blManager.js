@@ -19,15 +19,18 @@ async updateUser(request) {
       }
       let auth0Req = {}
       
-      if (request.name) {
-        auth0Req['given_name'] = request.name
-        auth0Req['name'] = request.name
-        updateObj['userName'] = request.name
+      if (request.userName) {
+        auth0Req['given_name'] = request.userName
+        auth0Req['name'] = request.userName
+        updateObj['userName'] = request.userName
       }
       if (request.profilePic)
         updateObj['profilePic'] = request.profilePic
 
-      
+      if(request.email){
+        auth0Req['email']= request.email
+        updateObj['email'] = request.email
+      }
 
       
 
@@ -45,24 +48,55 @@ async updateUser(request) {
       throw error
     }
   }
-  async changeEmail(request) {
-    try {
-      let user = await UserSchema.findOne({ userId: request.userId });
-      if (!user) {
-        throw apiFailureMessage.USER_NOT_EXISTS
-      }
-      if (user.otpAccountVerified !== request.otp)
-        throw apiFailureMessage.WRONG_OTP;
-      await new AuthBLManager().changeEmail({
-        email: request.newEmail,
-        userId: `auth0|${request.userId}`
-      })
-      await UserSchema.findOneAndUpdate({ userId: request.userId }, { email: request.newEmail });
-      return {
-        message: `Your email has been updated successfully`
-      }
-    } catch (error) {
-      throw error
-    }
+  async getUserByUserId(request) {
+    if (!request)
+      throw Utils.error({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
+
+    return await UserSchema.getUserDetails({ userId: request.userId })
+
   }
+  
+  signUp = async (requestData) => {
+    if (!requestData)
+      throw Utils.handleError(
+        {},
+        apiFailureMessage.INVALID_PARAMS,
+        httpConstants.RESPONSE_CODES.FORBIDDEN
+      );
+
+    try {
+      let userDetail = await UserSchema.find({ email: requestData.email });
+
+      if (userDetail && userDetail.length) {
+        throw Utils.error(
+          {},
+          apiFailureMessage.USER_ALREADY_EXISTS,
+          httpConstants.RESPONSE_CODES.FORBIDDEN
+        );
+      }
+
+      let userModel = new UserSchema(requestData);
+
+      let resObj = await userModel.save();
+
+      // let userRes = await resObj.save();
+
+      // requestData["user_id"] = userRes.userId;
+
+      const [error, addUserRes] = await Utils.parseResponse(
+        new AuthBLManager().signUp(requestData)
+      );
+
+      if (error)
+        throw Utils.error(
+          {},
+          error.message || apiFailureMessage.USER_CREATE_AUTH0,
+          httpConstants.RESPONSE_CODES.FORBIDDEN
+        );
+
+      return addUserRes;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
