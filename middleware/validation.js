@@ -1,5 +1,5 @@
-import Utils from '../app/utils'
-import * as yup from 'yup'
+import Utils from "../app/utils";
+import * as yup from "yup";
 
 module.exports = {
   validateUserLogin: async (req, res, next) => {
@@ -20,10 +20,26 @@ module.exports = {
 
 const validate = async (schema, reqData, res, next) => {
   try {
-    await schema.validate(reqData, { abortEarly: false })
-    next()
+    await schema.validate(reqData, { abortEarly: false });
+    next();
   } catch (e) {
-    const errors = e.inner.map(({ path, message, value }) => ({ path, message, value }))
-    Utils.responseForValidation(res, errors)
+    const errors = e.inner.map(({ path, message, value }) => ({
+      path,
+      message,
+      value,
+    }));
+    Utils.responseForValidation(res, errors);
   }
-}
+};
+
+
+
+
+
+
+
+
+
+
+
+

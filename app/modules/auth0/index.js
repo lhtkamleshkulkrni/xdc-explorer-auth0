@@ -5,8 +5,10 @@ import { apiSuccessMessage, httpConstants } from "../../common/constants";
 export default class AuthenticationController {
   async signUp(request, response) {
     try {
+      //lhtLog("Inside signup", "signup", request.body, 0, "");
+
       const [error, getRes] = await Utils.parseResponse(
-        new BlManager().signUp(request.body)
+        new BlManager().signUp(request)
       );
 
       if (!getRes) return Utils.handleError(error, request, response);
@@ -65,6 +67,8 @@ export default class AuthenticationController {
     }
   }
 
+  
+
   async changePassword(request, response) {
     try {
       const [error, getRes] = await Utils.parseResponse(
@@ -113,3 +117,6 @@ export default class AuthenticationController {
     }
   }
 }
+
+
+

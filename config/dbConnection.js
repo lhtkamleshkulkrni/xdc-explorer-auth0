@@ -1,37 +1,36 @@
-import mongoose from 'mongoose'
-import Config from '.'
-const fs = require('fs')
+import Config from ".";
+
+import mongoose from "mongoose";
+
+import fs from "fs";
+
 export default class DBConnection {
-  static connect(dbUrl) {
-    console.log('DB trying to connect on ' + new Date() + ' to url' + Config.DB)
-    const caContent = [
+  static connect() {
+    //returning true, as we are not using any DB connection for users in this project
 
-      fs.readFileSync(__dirname + "/rds-combined-ca-bundle.pem"),
-
-    ];
+    console.log(
+      "DB trying to connect on " + new Date() + " to url" + Config.DB
+    );
 
     const options = {
-
       keepAlive: 1,
 
-      autoReconnect: true,
-
       poolSize: 10,
+
+      retryWrites: false,
 
       ssl: true,
 
       sslValidate: false,
 
-      sslCA: caContent,
-
       useNewUrlParser: true,
-
-      useUnifiedTopology: true,
 
       useCreateIndex: true,
 
-      retryWrites: false,
-    }
-    return mongoose.connect(Config.DB, options)
+      useUnifiedTopology: true,
+
+      sslCA: [fs.readFileSync("./xinfin-rds-combined-ca-bundle.pem")],
+    };
+    return mongoose.connect(Config.DB, options);
   }
 }

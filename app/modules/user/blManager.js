@@ -1,6 +1,7 @@
 import UserSchema from "../../models/user";
 import { AdminRoles, Consents, apiFailureMessage, apiSuccessMessage, Auth0RoleNameConstants, emailTitles, genericConstants, httpConstants, portalType, statusConstant, statusConstants } from "../../common/constants";
 import Utils from "../../utils";
+import AuthenticationController from "../auth0";
 import AuthBLManager from "../auth0/manager";
 
 
@@ -70,22 +71,22 @@ async updateUser(request) {
       if (userDetail && userDetail.length) {
         throw Utils.error(
           {},
-          apiFailureMessage.USER_ALREADY_EXISTS,
+          apiFailureMessage.INVALID_PARAMS,
           httpConstants.RESPONSE_CODES.FORBIDDEN
         );
       }
 
+      const [error, addUserRes] = await Utils.parseResponse(
+        new AuthenticationController().signUp(requestData)
+      );
+
+      requestData["userId"] = addUserRes.userId;
+
+      console.log("data", requestData); 
+
       let userModel = new UserSchema(requestData);
 
-      let resObj = await userModel.save();
-
-      // let userRes = await resObj.save();
-
-      // requestData["user_id"] = userRes.userId;
-
-      const [error, addUserRes] = await Utils.parseResponse(
-        new AuthBLManager().signUp(requestData)
-      );
+      let userRes = await userModel.save()
 
       if (error)
         throw Utils.error(
@@ -94,9 +95,9 @@ async updateUser(request) {
           httpConstants.RESPONSE_CODES.FORBIDDEN
         );
 
-      return addUserRes;
+      return userRes;
     } catch (error) {
       throw error;
     }
-  };
+}
 }
