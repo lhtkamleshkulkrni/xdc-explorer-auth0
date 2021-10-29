@@ -15,7 +15,6 @@ export default class AuthenticationController {
       return Utils.response(
         response,
         getRes,
-        apiSuccessMessage.USER_CREATE_SUCCESS,
         httpConstants.RESPONSE_STATUS.SUCCESS,
         httpConstants.RESPONSE_CODES.OK
       );
@@ -102,7 +101,7 @@ export default class AuthenticationController {
       return Utils.response(
         response,
         getRes,
-        apiSuccessMessage.USER_PASSWORD_RESET_SUCCESS,
+        apiSuccessMessage.USER_LOGOUT_SUCCESS,
         httpConstants.RESPONSE_STATUS.SUCCESS,
         httpConstants.RESPONSE_CODES.OK
       );

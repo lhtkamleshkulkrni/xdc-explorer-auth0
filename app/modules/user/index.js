@@ -80,7 +80,7 @@ export default class UserController {
       return Utils.response(
         response,
         addUserResponse,
-        apiSuccessMessage.USER_ADD_SUCCESS,
+        apiSuccessMessage.USER_SIGNUP_SUCCESS,
         httpConstants.RESPONSE_STATUS.SUCCESS,
         httpConstants.RESPONSE_CODES.OK
       );

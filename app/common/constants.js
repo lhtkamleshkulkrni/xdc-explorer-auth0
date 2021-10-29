@@ -69,7 +69,12 @@ export const genericConstants = {
 export const apiSuccessMessage = {
   FETCH_SUCCESS: 'Information fetched successfully',
   USER_UPDATE_SUCCESS:'user updated successfully',
+  USER_LOGOUT_SUCCESS:'user logout successfully',
   EMAIL_UPDATED_SUCCESS: 'email changed successfully',
+  USER_ALREADY_EXISTS: 'user already exists',
+  USER_PASSWORD_RESET_SUCCESS:"We sent an email to your Mail",
+  USER_SIGNUP_SUCCESS:"User signup successfully",
+
 }
 
 export const apiEndpoints = {

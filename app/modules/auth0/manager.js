@@ -132,6 +132,7 @@ export default class Manager {
       "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON,
       Authorization: `Bearer ${accessToken}`,
     };
+    
     const userInfoRes = await HttpService.executeHTTPRequest(
       httpConstants.METHOD_TYPE.POST,
       Config.AUTH0_DOMAIN,
@@ -213,46 +214,33 @@ export default class Manager {
     return updateRes;
   };
 
-  forgotPassword = async (request) => {
+  forgotPassword = async (requestData) => {
     try {
-      if (!request || Object.keys(request).length < 1 || !request.email)
-        throw apiFailureMessage.INVALID_PARAMS;
+        if (!requestData || Object.keys(requestData).length < 1 || !requestData.email)
+            throw apiFailureMessage.INVALID_PARAMS;
 
-      let user = await UserModel.findOne({ email: request.email });
-      if (!user) {
-        throw apiFailureMessage.USER_NOT_EXISTS;
-      }
-      const headers = { "content-type": "application/json" };
-      let requestObj = {
-        client_id: Config.AUTH0_CLIENT_ID,
-        connection: Config.AUTH0_CONNECTION,
-        email: request.email,
-      };
+        let user = await UserModel.findOne({ email: requestData.email })
+        if (!user) {
+            throw apiFailureMessage.USER_NOT_EXISTS
+        }
+        const headers = { "content-type": "application/json" };
+        let requestObj = {
+            "client_id": Config.AUTH0_MANAGEMENT_API_CLIENT_ID,
+            "connection": Config.AUTH0_CONNECTION,
+            "email": requestData.email,
+        }
 
-      let forgotPassResponse = await HttpService.executeHTTPRequest(
-        httpConstants.METHOD_TYPE.POST,
-        Config.AUTH0_DOMAIN,
-        `dbconnections/change_password`,
-        requestObj,
-        headers
-      );
-      console.log("forgotPassResponse===", forgotPassResponse);
+        let forgotPassResponse = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.AUTH0_DOMAIN, `dbconnections/change_password`, requestObj, headers);
+        console.log("forgotPassResponse===", forgotPassResponse);
 
-      if (
-        (forgotPassResponse && forgotPassResponse.error) ||
-        forgotPassResponse.statusCode
-      )
-        throw Utils.error(
-          {},
-          forgotPassResponse.error || apiFailureMessage.RESET_PASSWORD_AUTH0,
-          httpConstants.RESPONSE_CODES.FORBIDDEN
-        );
+        if (forgotPassResponse && forgotPassResponse.error || forgotPassResponse.statusCode)
+            throw Utils.error({}, forgotPassResponse.error || apiFailureMessage.RESET_PASSWORD_AUTH0, httpConstants.RESPONSE_CODES.FORBIDDEN);
 
-      return { message: forgotPassResponse };
+        return { message: forgotPassResponse };
     } catch (error) {
-      throw error;
+        throw error
     }
-  };
+};
   signUp = async (requestData) => {
     try {
       if (
