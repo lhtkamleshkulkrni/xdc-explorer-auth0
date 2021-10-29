@@ -14,10 +14,11 @@ module.exports = (app) => {
      * route definition
      */
     app.post('/sign-in',ValidationManger.validateUserLogin, new AuthenticationController().signIn);
-    app.post("/forgot-password",ValidationManger.validateEmail, new AuthenticationController().forgotPassword);
+    app.post("/forgot-password", new AuthenticationController().forgotPassword);
+    app.get("/log-out", new AuthenticationController().logOut);
     app.post('/update-user', new UserController().updateUser);
     app.get('/user-info', new UserController().getUserByUserId);
-    app.post("/changeEmail", new AuthenticationController().changeEmail);
+    
     app.post("/change-password", new AuthenticationController().changePassword);
     app.post('/sign-up', new UserController().signUp);
 };
