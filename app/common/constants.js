@@ -2,7 +2,8 @@ export const httpConstants = {
   METHOD_TYPE: {
     POST: 'POST',
     GET: 'GET',
-    PUT: 'PUT'
+    PUT: 'PUT',
+    PATCH: 'PATCH'
   },
   HEADER_TYPE: {
     URL_ENCODED: 'application/x-www-form-urlencoded',
@@ -66,7 +67,14 @@ export const genericConstants = {
 }
 
 export const apiSuccessMessage = {
-  FETCH_SUCCESS: 'Information fetched successfully'
+  FETCH_SUCCESS: 'Information fetched successfully',
+  USER_UPDATE_SUCCESS:'user updated successfully',
+  USER_LOGOUT_SUCCESS:'user logout successfully',
+  EMAIL_UPDATED_SUCCESS: 'email changed successfully',
+  USER_ALREADY_EXISTS: 'user already exists',
+  USER_PASSWORD_RESET_SUCCESS:"We sent an email to your Mail",
+  USER_SIGNUP_SUCCESS:"User signup successfully",
+
 }
 
 export const apiEndpoints = {
@@ -76,11 +84,13 @@ export const apiEndpoints = {
 export const apiFailureMessage = {
   INVALID_PARAMS: 'Invalid Parameters',
   INVALID_REQUEST: 'Invalid Request',
+  UPDATE_USER: 'Unable to update user',
   INVALID_SESSION_TOKEN: 'Invalid session token',
   INTERNAL_SERVER_ERROR: 'Internal server Error',
   BAD_REQUEST: 'Bad Request!',
   DEVICE_ID_OR_SESSION_TOKEN_EMPTY: 'Device id or session token can\'t be empty or null',
   SESSION_GENERATION: 'Unable to generate session!',
   SESSION_EXPIRED: 'Session Expired!',
-  USER_ALREADY_EXISTS: 'User already exists'
+  RESET_PASSWORD_AUTH0:'reset password successfully',
+  USER_NOT_EXISTS:'user does not exist'
 }

@@ -1,7 +1,3 @@
-/**
- * Created by AyushK on 18/09/20.
- */
-
 'use strict'
 import { apiFailureMessage, httpConstants } from '../common/constants'
 
