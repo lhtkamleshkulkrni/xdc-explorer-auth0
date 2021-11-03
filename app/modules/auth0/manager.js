@@ -119,31 +119,21 @@ export default class Manager {
   };
 
   async signIn(request) {
-    if (!request || !request.email || !request.password)
-      throw { message: "email and password are required" };
-    const accessToken = await this.getAccessTokenSignIn(
-      request.email,
-      request.password
-    ).catch((err) => {
-      throw err;
+    if(!request || !request.email || !request.password)
+        throw {message:"email and password are required"}
+    const accessToken = await this.getAccessTokenSignIn(request.email, request.password).catch(err => {
+        throw err
     });
-    console.log("accseeewes", accessToken);
+    console.log(accessToken)
     const headers = {
-      "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON,
-      Authorization: `Bearer ${accessToken}`,
-    };
-    
-    const userInfoRes = await HttpService.executeHTTPRequest(
-      httpConstants.METHOD_TYPE.POST,
-      Config.AUTH0_DOMAIN,
-      "userinfo",
-      {},
-      headers
-    ).catch((err) => {
-      throw err;
+        "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON,
+        Authorization: `Bearer ${accessToken}`
+    }
+    const userInfoRes = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.AUTH0_DOMAIN, "userinfo", {}, headers).catch(err => {
+        throw err;
     });
     return userInfoRes;
-  }
+}
 
   logIn = async (email, password) => {
     const data = {

@@ -71,13 +71,13 @@ async updateUser(request) {
       if (userDetail && userDetail.length) {
         throw Utils.error(
           {},
-          apiFailureMessage.USER_ALREADY_EXISTS,
+          apiFailureMessage.INVALID_PARAMS,
           httpConstants.RESPONSE_CODES.FORBIDDEN
         );
       }
 
       const [error, addUserRes] = await Utils.parseResponse(
-        new AuthBLManager().signUp(requestData)
+        new AuthenticationController().signUp(requestData)
       );
 
       requestData["userId"] = addUserRes.userId;
@@ -99,5 +99,5 @@ async updateUser(request) {
     } catch (error) {
       throw error;
     }
-  };
+}
 }

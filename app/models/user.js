@@ -6,6 +6,8 @@ let UserSchema = new Schema({
   userName: { type: String, default: "" },
   email: { type: String, default: "" },
   password: { type: String, default: "" },
+  profileURL: { type: String, default: "" },
+  pushToken: { type: String, default: "" },
 
   status: {
     type: String,
