@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 let Schema = mongoose.Schema;
 let UserSchema = new Schema({
   userId: { type: String, default: "" },
-  userName: { type: String, default: "" },
+  name: { type: String, default: "" },
   email: { type: String, default: "" },
   password: { type: String, default: "" },
   profileURL: { type: String, default: "" },

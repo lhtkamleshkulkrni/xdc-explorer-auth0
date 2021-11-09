@@ -13,7 +13,7 @@ module.exports = (app) => {
     /**
      * route definition
      */
-    app.post('/sign-in',ValidationManger.validateUserLogin, new AuthenticationController().signIn);
+    app.post('/sign-in', new AuthenticationController().signIn);
     app.post("/forgot-password", new AuthenticationController().forgotPassword);
     app.get("/log-out", new AuthenticationController().logOut);
     app.post('/update-user', new UserController().updateUser);
