@@ -11,7 +11,7 @@ async updateUser(request) {
         throw Utils.error({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
       let user = await UserSchema.findOne({ userId: request.userId })
       if (!user) {
-        throw apiFailureMessage.USER_NOT_EXISTS
+        throw apiFailureMessage.USER_DOES_NOT_EXISTS
       }
       let updateObj = {
         ...user._doc,
@@ -27,6 +27,7 @@ async updateUser(request) {
       }
       if (request.profilePic)
         updateObj['profilePic'] = request.profilePic
+        auth0Req['picture'] = request.profilePic
 
       if(request.email){
         auth0Req['email']= request.email
