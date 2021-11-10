@@ -33,14 +33,17 @@ export default class Manager {
     ).catch((err) => {
       throw err;
     });
-    
 
     if (
       accessTokenResponse &&
       (accessTokenResponse.error || accessTokenResponse.error_description)
     )
-    throw Utils.error({}, accessTokenResponse.error_description || apiFailureMessage.INVALID_PARAMS,
-      httpConstants.RESPONSE_CODES.FORBIDDEN);
+      throw Utils.error(
+        {},
+        accessTokenResponse.error_description ||
+          apiFailureMessage.INVALID_PARAMS,
+        httpConstants.RESPONSE_CODES.FORBIDDEN
+      );
     return accessTokenResponse.access_token;
   }
 
@@ -64,14 +67,18 @@ export default class Manager {
     ).catch((err) => {
       throw err;
     });
-    
-console.log(accessTokenResponse)
+
+    console.log(accessTokenResponse);
     if (
       accessTokenResponse &&
       (accessTokenResponse.error || accessTokenResponse.error_description)
     )
-    throw Utils.error({}, accessTokenResponse.error_description || apiFailureMessage.INVALID_PARAMS,
-      httpConstants.RESPONSE_CODES.FORBIDDEN);
+      throw Utils.error(
+        {},
+        accessTokenResponse.error_description ||
+          apiFailureMessage.INVALID_PARAMS,
+        httpConstants.RESPONSE_CODES.FORBIDDEN
+      );
     return accessTokenResponse.access_token;
   };
 
@@ -95,43 +102,52 @@ console.log(accessTokenResponse)
     ).catch((err) => {
       throw err;
     });
-    
 
     if (
       accessTokenResponse &&
       (accessTokenResponse.error || accessTokenResponse.error_description)
     )
-    throw Utils.error({}, accessTokenResponse.error_description || apiFailureMessage.INVALID_PARAMS,
-      httpConstants.RESPONSE_CODES.FORBIDDEN);
+      throw Utils.error(
+        {},
+        accessTokenResponse.error_description ||
+          apiFailureMessage.INVALID_PARAMS,
+        httpConstants.RESPONSE_CODES.FORBIDDEN
+      );
     return accessTokenResponse.access_token;
   };
 
   async signIn(request) {
-    if(!request || !request.email || !request.password)
-        throw {message:"email and password are required"}
-    const accessToken = await this.getAccessTokenSignIn(request.email, request.password).catch(err => {
-        throw err
+    if (!request || !request.email || !request.password)
+      throw { message: "email and password are required" };
+    const accessToken = await this.getAccessTokenSignIn(
+      request.email,
+      request.password
+    ).catch((err) => {
+      throw err;
     });
-   
+
     const headers = {
-        "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON,
-        Authorization: `Bearer ${accessToken}`
-    }
-    const userInfoRes = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.AUTH0_DOMAIN, "userinfo", {}, headers)
-    .catch(err => {
-        throw err;
+      "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON,
+      Authorization: `Bearer ${accessToken}`,
+    };
+    const userInfoRes = await HttpService.executeHTTPRequest(
+      httpConstants.METHOD_TYPE.POST,
+      Config.AUTH0_DOMAIN,
+      "userinfo",
+      {},
+      headers
+    ).catch((err) => {
+      throw err;
     });
-    console.log("responsee",userInfoRes)
-    
+    console.log("responsee", userInfoRes);
+
     const newReturnObject = {
-  userInfoRes,
-      
-accessToken,
-      
-      }         
-      return newReturnObject
-    
-}
+      userInfoRes,
+
+      accessToken,
+    };
+    return newReturnObject;
+  }
 
   logIn = async (email, password) => {
     const data = {
@@ -203,31 +219,47 @@ accessToken,
 
   forgotPassword = async (requestData) => {
     try {
-        if (!requestData || Object.keys(requestData).length < 1 || !requestData.email)
-            throw apiFailureMessage.INVALID_PARAMS;
+      if (
+        !requestData ||
+        Object.keys(requestData).length < 1 ||
+        !requestData.email
+      )
+        throw apiFailureMessage.INVALID_PARAMS;
 
-        let user = await UserModel.findOne({ email: requestData.email })
-        if (!user) {
-            throw apiFailureMessage.USER_NOT_EXISTS
-        }
-        const headers = { "content-type": "application/json" };
-        let requestObj = {
-            "client_id": Config.AUTH0_MANAGEMENT_API_CLIENT_ID,
-            "connection": Config.AUTH0_CONNECTION,
-            "email": requestData.email,
-        }
+      let user = await UserModel.findOne({ email: requestData.email });
+      if (!user) {
+        throw apiFailureMessage.USER_NOT_EXISTS;
+      }
+      const headers = { "content-type": "application/json" };
+      let requestObj = {
+        client_id: Config.AUTH0_MANAGEMENT_API_CLIENT_ID,
+        connection: Config.AUTH0_CONNECTION,
+        email: requestData.email,
+      };
 
-        let forgotPassResponse = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.AUTH0_DOMAIN, `dbconnections/change_password`, requestObj, headers);
-       
+      let forgotPassResponse = await HttpService.executeHTTPRequest(
+        httpConstants.METHOD_TYPE.POST,
+        Config.AUTH0_DOMAIN,
+        `dbconnections/change_password`,
+        requestObj,
+        headers
+      );
 
-        if (forgotPassResponse && forgotPassResponse.error || forgotPassResponse.statusCode)
-            throw Utils.error({}, forgotPassResponse.error || apiFailureMessage.RESET_PASSWORD_AUTH0, httpConstants.RESPONSE_CODES.FORBIDDEN);
+      if (
+        (forgotPassResponse && forgotPassResponse.error) ||
+        forgotPassResponse.statusCode
+      )
+        throw Utils.error(
+          {},
+          forgotPassResponse.error || apiFailureMessage.RESET_PASSWORD_AUTH0,
+          httpConstants.RESPONSE_CODES.FORBIDDEN
+        );
 
-        return { message: forgotPassResponse };
+      return { message: forgotPassResponse };
     } catch (error) {
-        throw error
+      throw error;
     }
-};
+  };
   signUp = async (requestData) => {
     try {
       if (
@@ -246,6 +278,9 @@ accessToken,
         connection: Config.AUTH0_CONNECTION,
         email: requestData.email,
         password: requestData.password,
+        given_name: requestData.name,
+        name: requestData.name,
+        nickname: requestData.name,
       };
 
       let accessToken = await this.getAccessToken();
@@ -262,8 +297,6 @@ accessToken,
         requestObj,
         headers
       );
-
-      
 
       if ((signupResponse && signupResponse.error) || signupResponse.statusCode)
         throw signupResponse.message || apiFailureMessage.USER_CREATE_AUTH0;
@@ -316,7 +349,6 @@ accessToken,
         requestObj,
         headers
       );
-      
 
       if (
         (resetPassResponse && resetPassResponse.error) ||
@@ -327,7 +359,7 @@ accessToken,
           resetPassResponse.error || apiFailureMessage.RESET_PASSWORD_AUTH0,
           httpConstants.RESPONSE_CODES.FORBIDDEN
         );
-     
+
       return resetPassResponse;
     } catch (error) {
       throw error;
@@ -338,7 +370,7 @@ accessToken,
       if (
         !requestData ||
         Object.keys(requestData).length < 1 ||
-        !requestData.userId 
+        !requestData.userId
       )
         throw apiFailureMessage.INVALID_PARAMS;
 
@@ -346,7 +378,6 @@ accessToken,
       if (!userDetails) {
         throw apiFailureMessage.USER_NOT_EXISTS;
       }
-    
 
       let accessToken = await this.getManagementAccessToken();
       const headers = {
@@ -355,8 +386,7 @@ accessToken,
       };
 
       let requestObj = {
-        
-    client_id: requestData.userId
+        client_id: requestData.userId,
       };
 
       let resetPassResponse = await HttpService.executeHTTPRequest(
@@ -366,7 +396,6 @@ accessToken,
         requestObj,
         headers
       );
-     
 
       if (
         (resetPassResponse && resetPassResponse.error) ||
@@ -377,7 +406,7 @@ accessToken,
           resetPassResponse.error || apiFailureMessage.RESET_PASSWORD_AUTH0,
           httpConstants.RESPONSE_CODES.FORBIDDEN
         );
-     
+
       return resetPassResponse;
     } catch (error) {
       throw error;
