@@ -33,18 +33,14 @@ export default class Manager {
     ).catch((err) => {
       throw err;
     });
-    console.log(accessTokenResponse);
+    
 
     if (
       accessTokenResponse &&
       (accessTokenResponse.error || accessTokenResponse.error_description)
     )
-      throw UtilMethods.errorResponse(
-        {},
-        accessTokenResponse.error_description ||
-          apiFailureMessage.INVALID_PARAMS,
-        httpConstants.RESPONSE_CODES.FORBIDDEN
-      );
+    throw Utils.error({}, accessTokenResponse.error_description || apiFailureMessage.INVALID_PARAMS,
+      httpConstants.RESPONSE_CODES.FORBIDDEN);
     return accessTokenResponse.access_token;
   }
 
@@ -68,18 +64,14 @@ export default class Manager {
     ).catch((err) => {
       throw err;
     });
-    console.log(accessTokenResponse);
-
+    
+console.log(accessTokenResponse)
     if (
       accessTokenResponse &&
       (accessTokenResponse.error || accessTokenResponse.error_description)
     )
-      throw UtilMethods.errorResponse(
-        {},
-        accessTokenResponse.error_description ||
-          apiFailureMessage.INVALID_PARAMS,
-        httpConstants.RESPONSE_CODES.FORBIDDEN
-      );
+    throw Utils.error({}, accessTokenResponse.error_description || apiFailureMessage.INVALID_PARAMS,
+      httpConstants.RESPONSE_CODES.FORBIDDEN);
     return accessTokenResponse.access_token;
   };
 
@@ -103,47 +95,43 @@ export default class Manager {
     ).catch((err) => {
       throw err;
     });
-    console.log(accessTokenResponse);
+    
 
     if (
       accessTokenResponse &&
       (accessTokenResponse.error || accessTokenResponse.error_description)
     )
-      throw UtilMethods.errorResponse(
-        {},
-        accessTokenResponse.error_description ||
-          apiFailureMessage.INVALID_PARAMS,
-        httpConstants.RESPONSE_CODES.FORBIDDEN
-      );
+    throw Utils.error({}, accessTokenResponse.error_description || apiFailureMessage.INVALID_PARAMS,
+      httpConstants.RESPONSE_CODES.FORBIDDEN);
     return accessTokenResponse.access_token;
   };
 
   async signIn(request) {
-    if (!request || !request.email || !request.password)
-      throw { message: "email and password are required" };
-    const accessToken = await this.getAccessTokenSignIn(
-      request.email,
-      request.password
-    ).catch((err) => {
-      throw err;
+    if(!request || !request.email || !request.password)
+        throw {message:"email and password are required"}
+    const accessToken = await this.getAccessTokenSignIn(request.email, request.password).catch(err => {
+        throw err
     });
-    console.log("accseeewes", accessToken);
+   
     const headers = {
-      "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON,
-      Authorization: `Bearer ${accessToken}`,
-    };
-    
-    const userInfoRes = await HttpService.executeHTTPRequest(
-      httpConstants.METHOD_TYPE.POST,
-      Config.AUTH0_DOMAIN,
-      "userinfo",
-      {},
-      headers
-    ).catch((err) => {
-      throw err;
+        "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON,
+        Authorization: `Bearer ${accessToken}`
+    }
+    const userInfoRes = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.AUTH0_DOMAIN, "userinfo", {}, headers)
+    .catch(err => {
+        throw err;
     });
-    return userInfoRes;
-  }
+    console.log("responsee",userInfoRes)
+    
+    const newReturnObject = {
+  userInfoRes,
+      
+accessToken,
+      
+      }         
+      return newReturnObject
+    
+}
 
   logIn = async (email, password) => {
     const data = {
@@ -173,7 +161,6 @@ export default class Manager {
     ).catch((err) => {
       throw err;
     });
-    console.log(accessTokenResponse);
     if (
       accessTokenResponse &&
       (accessTokenResponse.error || accessTokenResponse.error_description)
@@ -231,7 +218,7 @@ export default class Manager {
         }
 
         let forgotPassResponse = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.AUTH0_DOMAIN, `dbconnections/change_password`, requestObj, headers);
-        console.log("forgotPassResponse===", forgotPassResponse);
+       
 
         if (forgotPassResponse && forgotPassResponse.error || forgotPassResponse.statusCode)
             throw Utils.error({}, forgotPassResponse.error || apiFailureMessage.RESET_PASSWORD_AUTH0, httpConstants.RESPONSE_CODES.FORBIDDEN);
@@ -276,7 +263,7 @@ export default class Manager {
         headers
       );
 
-      console.log("signupResponse===", signupResponse);
+      
 
       if ((signupResponse && signupResponse.error) || signupResponse.statusCode)
         throw signupResponse.message || apiFailureMessage.USER_CREATE_AUTH0;
@@ -329,7 +316,7 @@ export default class Manager {
         requestObj,
         headers
       );
-      console.log("resetPassResponse===", resetPassResponse);
+      
 
       if (
         (resetPassResponse && resetPassResponse.error) ||
@@ -340,7 +327,7 @@ export default class Manager {
           resetPassResponse.error || apiFailureMessage.RESET_PASSWORD_AUTH0,
           httpConstants.RESPONSE_CODES.FORBIDDEN
         );
-      console.log("resetPassResponseeeeeeeee===", resetPassResponse);
+     
       return resetPassResponse;
     } catch (error) {
       throw error;
@@ -379,7 +366,7 @@ export default class Manager {
         requestObj,
         headers
       );
-      console.log("resetPassResponse===", resetPassResponse);
+     
 
       if (
         (resetPassResponse && resetPassResponse.error) ||
@@ -390,7 +377,7 @@ export default class Manager {
           resetPassResponse.error || apiFailureMessage.RESET_PASSWORD_AUTH0,
           httpConstants.RESPONSE_CODES.FORBIDDEN
         );
-      console.log("resetPassResponseeeeeeeee===", resetPassResponse);
+     
       return resetPassResponse;
     } catch (error) {
       throw error;

@@ -3,8 +3,7 @@ import { AdminRoles, Consents, apiFailureMessage, apiSuccessMessage, Auth0RoleNa
 import Utils from "../../utils";
 import AuthenticationController from "../auth0";
 import AuthBLManager from "../auth0/manager";
-
-
+const hash = require("object-hash");
 export default class BlManager {
 async updateUser(request) {
     try {
@@ -12,7 +11,7 @@ async updateUser(request) {
         throw Utils.error({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
       let user = await UserSchema.findOne({ userId: request.userId })
       if (!user) {
-        throw apiFailureMessage.USER_NOT_EXISTS
+        throw apiFailureMessage.USER_DOES_NOT_EXISTS
       }
       let updateObj = {
         ...user._doc,
@@ -20,23 +19,22 @@ async updateUser(request) {
       }
       let auth0Req = {}
       
-      if (request.userName) {
-        auth0Req['given_name'] = request.userName
-        auth0Req['name'] = request.userName
-        updateObj['userName'] = request.userName
+      if (request.name) {
+        auth0Req['given_name'] = request.name
+        auth0Req['nickname'] = request.name
+        auth0Req['name'] = request.name
+        updateObj['name'] = request.name
       }
       if (request.profilePic)
         updateObj['profilePic'] = request.profilePic
+        auth0Req['picture'] = request.profilePic
 
       if(request.email){
         auth0Req['email']= request.email
         updateObj['email'] = request.email
       }
-
-      
-
       if (auth0Req && Object.keys(auth0Req) && Object.keys(auth0Req).length) {
-        auth0Req['userId'] = request.userId //`auth0|${request.userId}`
+        auth0Req['userId'] = request.userId 
         await new AuthBLManager().updateUser(auth0Req)
       }
 
@@ -64,6 +62,8 @@ async updateUser(request) {
         apiFailureMessage.INVALID_PARAMS,
         httpConstants.RESPONSE_CODES.FORBIDDEN
       );
+      const pass=requestData.password
+
 
     try {
       let userDetail = await UserSchema.find({ email: requestData.email });
@@ -81,9 +81,8 @@ async updateUser(request) {
       );
 
       requestData["userId"] = addUserRes.userId;
-
-      console.log("data", requestData); 
-
+      let hashPass = hash.MD5(pass)
+      requestData["password"] = hashPass 
       let userModel = new UserSchema(requestData);
 
       let userRes = await userModel.save()

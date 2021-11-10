@@ -74,6 +74,7 @@ export const apiSuccessMessage = {
   USER_ALREADY_EXISTS: 'user already exists',
   USER_PASSWORD_RESET_SUCCESS:"We sent an email to your Mail",
   USER_SIGNUP_SUCCESS:"User signup successfully",
+  LOGIN_SUCCESS:"User login successfully"
 
 }
 
@@ -92,5 +93,7 @@ export const apiFailureMessage = {
   SESSION_GENERATION: 'Unable to generate session!',
   SESSION_EXPIRED: 'Session Expired!',
   RESET_PASSWORD_AUTH0:'reset password successfully',
-  USER_NOT_EXISTS:'user does not exist'
+  USER_ALREADY_EXISTS:'user alraedy exist',
+  USER_DOES_NOT_EXISTS:'user does not exist'
+  
 }

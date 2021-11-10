@@ -27,6 +27,7 @@
     "mongoose-sequence": "^5.3.1",
     "morgan": "^1.9.1",
     "nodemon": "^1.19.2",
+    "object-hash": "^2.2.0",
     "path": "^0.12.7",
     "request": "^2.88.2",
     "yup": "^0.29.3"

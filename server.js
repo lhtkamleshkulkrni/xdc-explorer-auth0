@@ -9,7 +9,7 @@ const app = new APP()
 require('./config/express')(app)
 global.lhtWebLog = Utils.lhtLog
  
-class Server {
+class Server {  
   static listen () {
     Promise.all([DBConnection.connect()]).then(() => {
       app.listen(Config.PORT)
