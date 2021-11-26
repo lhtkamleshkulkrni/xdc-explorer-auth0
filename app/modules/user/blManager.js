@@ -51,7 +51,7 @@ async updateUser(request) {
     if (!request)
       throw Utils.error({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
 
-    return await UserSchema.getUserDetails({ userId: request.userId })
+    return await UserSchema.getUserDetails({ name: request.name })
 
   }
   
@@ -66,12 +66,12 @@ async updateUser(request) {
 
 
     try {
-      let userDetail = await UserSchema.find({ email: requestData.email });
+      let userDetail = await UserSchema.find({ name: requestData.name });
 
       if (userDetail && userDetail.length) {
         throw Utils.error(
           {},
-          apiFailureMessage.USER_ALREADY_EXISTS,
+          apiFailureMessage.USER_NAME_ALREADY_EXISTS,
           httpConstants.RESPONSE_CODES.FORBIDDEN
         );
       }
@@ -95,8 +95,10 @@ async updateUser(request) {
         );
 
       return userRes;
-    } catch (error) {
-      throw error;
-    }
+    } catch (error)  {throw Utils.error(
+      {},
+      apiFailureMessage.USER_ALREADY_EXISTS,
+      httpConstants.RESPONSE_CODES.FORBIDDEN
+    );}
   };
 }
