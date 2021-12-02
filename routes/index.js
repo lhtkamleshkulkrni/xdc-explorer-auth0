@@ -7,6 +7,7 @@ import {stringConstants} from "../app/common/constants";
 import AuthenticationController from '../app/modules/auth0/index'
 import UserController from '../app/modules/user/index';
 
+
 module.exports = (app) => {
     app.get('/', (req, res) => res.send(stringConstants.SERVICE_STATUS_HTML));
 

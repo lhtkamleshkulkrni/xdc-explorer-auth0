@@ -139,6 +139,7 @@ export default class Manager {
     ).catch((err) => {
       throw err;
     });
+    
     console.log("responsee", userInfoRes);
 
     const newReturnObject = {
@@ -147,7 +148,8 @@ export default class Manager {
       accessToken,
     };
     return newReturnObject;
-  }
+  
+}
 
   logIn = async (email, password) => {
     const data = {
