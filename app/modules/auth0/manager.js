@@ -120,8 +120,7 @@ export default class Manager {
   async signIn(request) {
     try{
     let userDetail = await UserSchema.find({ name: request.name });
-    console.log(userDetail[0].name)
-    console.log(userDetail[0].email)
+    
     const accessToken = await this.getAccessTokenSignIn(
       userDetail[0].email,
       request.password
@@ -142,7 +141,7 @@ export default class Manager {
     ).catch((err) => {
       throw err;
     });
-    console.log("responsee", userInfoRes);
+    
 
     const newReturnObject = {
       userInfoRes,
