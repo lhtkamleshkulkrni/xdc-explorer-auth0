@@ -17,7 +17,6 @@ module.exports = {
   },
 }
 
-
 const validate = async (schema, reqData, res, next) => {
   try {
     await schema.validate(reqData, { abortEarly: false });
