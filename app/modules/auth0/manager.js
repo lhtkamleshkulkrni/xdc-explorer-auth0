@@ -5,6 +5,7 @@ import UserModel from "../../models/user";
 import User from "../user/blManager";
 import Utils from "../../utils";
 import BlManager from "./index";
+import UserSchema from "../../models/user";
 
 export default class Manager {
   async getAccessTokenSignIn(email, password) {
@@ -117,15 +118,16 @@ export default class Manager {
   };
 
   async signIn(request) {
-    if (!request || !request.email || !request.password)
-      throw { message: "email and password are required" };
+    try{
+    let userDetail = await UserSchema.find({ name: request.name });
+    
     const accessToken = await this.getAccessTokenSignIn(
-      request.email,
+      userDetail[0].email,
       request.password
     ).catch((err) => {
       throw err;
     });
-
+  
     const headers = {
       "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON,
       Authorization: `Bearer ${accessToken}`,
@@ -140,7 +142,6 @@ export default class Manager {
       throw err;
     });
     
-    console.log("responsee", userInfoRes);
 
     const newReturnObject = {
       userInfoRes,
@@ -148,8 +149,12 @@ export default class Manager {
       accessToken,
     };
     return newReturnObject;
-  
-}
+  } catch (error) {throw Utils.error(
+    {},
+    apiFailureMessage.INVALID_PARAMS,
+    httpConstants.RESPONSE_CODES.FORBIDDEN
+  );}
+  }
 
   logIn = async (email, password) => {
     const data = {

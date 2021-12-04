@@ -32,6 +32,9 @@ UserSchema.static({
   getUserDetails: function (request, selectionKey = "") {
     return this.findOne(request, selectionKey);
   },
+  findData: function (findObj) {
+    return this.find(findObj)
+  },
 
   getUserList: function (
     request,
