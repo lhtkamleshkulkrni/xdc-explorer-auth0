@@ -13,18 +13,29 @@ async updateUser(request) {
       if (!user) {
         throw apiFailureMessage.USER_DOES_NOT_EXISTS
       }
+      let userDetail = await UserSchema.find({ name: request.name });
+
+      if (userDetail && userDetail.length) {
+        throw Utils.error(
+          {},
+          apiFailureMessage.USER_NAME_ALREADY_EXISTS,
+          httpConstants.RESPONSE_CODES.FORBIDDEN
+        );
+      }
       let updateObj = {
         ...user._doc,
         modifiedOn: new Date().getTime()
       }
       let auth0Req = {}
       
+
       if (request.name) {
         auth0Req['given_name'] = request.name
         auth0Req['nickname'] = request.name
         auth0Req['name'] = request.name
         updateObj['name'] = request.name
       }
+    
       if (request.profilePic)
         updateObj['profilePic'] = request.profilePic
         auth0Req['picture'] = request.profilePic
@@ -46,6 +57,7 @@ async updateUser(request) {
     } catch (error) {
       throw error
     }
+  
   }
   async getUserByUserId(request) {
     if (!request)
