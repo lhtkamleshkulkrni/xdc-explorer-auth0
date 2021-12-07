@@ -383,7 +383,7 @@ export default class Manager {
 
       let userDetails = await UserModel.findOne({ userId: requestData.userId });
       if (!userDetails) {
-        throw apiFailureMessage.USER_NOT_EXISTS;
+        throw apiFailureMessage.USER_DOES_NOT_EXISTS;
       }
 
       let accessToken = await this.getManagementAccessToken();

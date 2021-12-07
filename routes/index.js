@@ -16,7 +16,7 @@ module.exports = (app) => {
      */
     app.post('/sign-in', new AuthenticationController().signIn);
     app.post("/forgot-password", new AuthenticationController().forgotPassword);
-    app.get("/log-out", new AuthenticationController().logOut);
+    app.post("/log-out", new AuthenticationController().logOut);
     app.post('/update-user', new UserController().updateUser);
     app.get('/user-info', new UserController().getUserByUserId);
     
