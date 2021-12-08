@@ -87,9 +87,15 @@ export default class AuthenticationController {
   }
 
   async logOut(request, response) {
+    if (!request || !request.params || !request.params.userId)
+    throw Utils.error(
+      {},
+      apiFailureMessage.INVALID_PARAMS,
+      httpConstants.RESPONSE_CODES.FORBIDDEN
+    );
     try {
       const [error, getRes] = await Utils.parseResponse(
-        new BlManager().logOut(request.body)
+        new BlManager().logOut(request.params)
       );
       if (!getRes) return Utils.handleError(error, request, response);
       return Utils.response(
