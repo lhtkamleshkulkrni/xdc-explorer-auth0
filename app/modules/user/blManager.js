@@ -22,6 +22,14 @@ async updateUser(request) {
           httpConstants.RESPONSE_CODES.FORBIDDEN
         );
       }
+      let userEmail = await UserSchema.find({ email: request.email });
+      if (userEmail && userEmail.length) {
+        throw Utils.error(
+          {},
+          apiFailureMessage.USER_MAIL_ALREADY_EXISTS,
+          httpConstants.RESPONSE_CODES.FORBIDDEN
+        );
+      }
       let updateObj = {
         ...user._doc,
         modifiedOn: new Date().getTime()
@@ -113,4 +121,8 @@ async updateUser(request) {
       httpConstants.RESPONSE_CODES.FORBIDDEN
     );}
   };
+
+
+
+  
 }
