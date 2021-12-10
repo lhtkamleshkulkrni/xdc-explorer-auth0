@@ -373,17 +373,17 @@ export default class Manager {
     }
   };
   logOut = async (requestData) => {
-    try {
-      if (
-        !requestData ||
-        Object.keys(requestData).length < 1 ||
-        !requestData.userId
-      )
-        throw apiFailureMessage.INVALID_PARAMS;
-
+    
+    if (!requestData)
+    throw Utils.error(
+        {},
+        apiFailureMessage.INVALID_PARAMS,
+        httpConstants.RESPONSE_CODES.FORBIDDEN
+    );
+try{
       let userDetails = await UserModel.findOne({ userId: requestData.userId });
       if (!userDetails) {
-        throw apiFailureMessage.USER_NOT_EXISTS;
+        throw apiFailureMessage.USER_DOES_NOT_EXISTS;
       }
 
       let accessToken = await this.getManagementAccessToken();
