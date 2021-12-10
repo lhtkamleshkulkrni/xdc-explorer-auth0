@@ -21,5 +21,6 @@ module.exports = (app) => {
     app.get('/user-info', new UserController().getUserByUserId);
     
     app.post("/change-password", new AuthenticationController().changePassword);
+    
     app.post('/sign-up', new UserController().signUp);
 };

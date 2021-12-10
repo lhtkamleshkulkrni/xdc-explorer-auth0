@@ -214,7 +214,13 @@ export default class Manager {
       request,
       headers
     );
-
+    await HttpService.executeHTTPRequest(
+      httpConstants.METHOD_TYPE.POST,
+      Config.AUTH0_DOMAIN,
+      `api/v2/jobs/verification-email`,
+      userId,
+      headers
+    );
     if (!updateRes || updateRes.error)
       throw Utils.error(
         [],
@@ -419,4 +425,8 @@ try{
       throw error;
     }
   };
+
+
+  
+
 }
