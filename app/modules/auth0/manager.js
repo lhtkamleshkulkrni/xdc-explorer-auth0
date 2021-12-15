@@ -1,4 +1,4 @@
-import { apiFailureMessage, httpConstants } from "../../common/constants";
+import { apiFailureMessage, httpConstants, genericConstants, amqpConstants } from "../../common/constants";
 import HttpService from "../../service/http-service";
 import Config from "../../../config/index";
 import UserModel from "../../models/user";
@@ -6,7 +6,8 @@ import User from "../user/blManager";
 import Utils from "../../utils";
 import BlManager from "./index";
 import UserSchema from "../../models/user";
-
+import RabbitMqController from "../queue/index";
+import EmailTemplate from '../../common/emailTemplate'
 export default class Manager {
   async getAccessTokenSignIn(email, password) {
     const data = {
@@ -42,7 +43,7 @@ export default class Manager {
       throw Utils.error(
         {},
         accessTokenResponse.error_description ||
-          apiFailureMessage.INVALID_PARAMS,
+        apiFailureMessage.INVALID_PARAMS,
         httpConstants.RESPONSE_CODES.FORBIDDEN
       );
     return accessTokenResponse.access_token;
@@ -69,7 +70,6 @@ export default class Manager {
       throw err;
     });
 
-    console.log(accessTokenResponse);
     if (
       accessTokenResponse &&
       (accessTokenResponse.error || accessTokenResponse.error_description)
@@ -77,7 +77,7 @@ export default class Manager {
       throw Utils.error(
         {},
         accessTokenResponse.error_description ||
-          apiFailureMessage.INVALID_PARAMS,
+        apiFailureMessage.INVALID_PARAMS,
         httpConstants.RESPONSE_CODES.FORBIDDEN
       );
     return accessTokenResponse.access_token;
@@ -111,49 +111,51 @@ export default class Manager {
       throw Utils.error(
         {},
         accessTokenResponse.error_description ||
-          apiFailureMessage.INVALID_PARAMS,
+        apiFailureMessage.INVALID_PARAMS,
         httpConstants.RESPONSE_CODES.FORBIDDEN
       );
     return accessTokenResponse.access_token;
   };
 
   async signIn(request) {
-    try{
-    let userDetail = await UserSchema.find({ name: request.name });
-    
-    const accessToken = await this.getAccessTokenSignIn(
-      userDetail[0].email,
-      request.password
-    ).catch((err) => {
-      throw err;
-    });
-  
-    const headers = {
-      "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON,
-      Authorization: `Bearer ${accessToken}`,
-    };
-    const userInfoRes = await HttpService.executeHTTPRequest(
-      httpConstants.METHOD_TYPE.POST,
-      Config.AUTH0_DOMAIN,
-      "userinfo",
-      {},
-      headers
-    ).catch((err) => {
-      throw err;
-    });
-    
+    try {
+      let userDetail = await UserSchema.find({ name: request.name });
 
-    const newReturnObject = {
-      userInfoRes,
+      const accessToken = await this.getAccessTokenSignIn(
+        userDetail[0].email,
+        request.password
+      ).catch((err) => {
+        throw err;
+      });
 
-      accessToken,
-    };
-    return newReturnObject;
-  } catch (error) {throw Utils.error(
-    {},
-    apiFailureMessage.INVALID_PARAMS,
-    httpConstants.RESPONSE_CODES.FORBIDDEN
-  );}
+      const headers = {
+        "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON,
+        Authorization: `Bearer ${accessToken}`,
+      };
+      const userInfoRes = await HttpService.executeHTTPRequest(
+        httpConstants.METHOD_TYPE.POST,
+        Config.AUTH0_DOMAIN,
+        "userinfo",
+        {},
+        headers
+      ).catch((err) => {
+        throw err;
+      });
+
+
+      const newReturnObject = {
+        userInfoRes,
+
+        accessToken,
+      };
+      return newReturnObject;
+    } catch (error) {
+      throw Utils.error(
+        {},
+        apiFailureMessage.INVALID_PARAMS,
+        httpConstants.RESPONSE_CODES.FORBIDDEN
+      );
+    }
   }
 
   logIn = async (email, password) => {
@@ -191,7 +193,7 @@ export default class Manager {
       throw Utils.error(
         {},
         accessTokenResponse.error_description ||
-          apiFailureMessage.INVALID_PARAMS,
+        apiFailureMessage.INVALID_PARAMS,
         httpConstants.RESPONSE_CODES.FORBIDDEN
       );
 
@@ -238,41 +240,83 @@ export default class Manager {
         !requestData.email
       )
         throw apiFailureMessage.INVALID_PARAMS;
-
       let user = await UserModel.findOne({ email: requestData.email });
       if (!user) {
         throw apiFailureMessage.USER_NOT_EXISTS;
       }
-      const headers = { "content-type": "application/json" };
-      let requestObj = {
-        client_id: Config.AUTH0_MANAGEMENT_API_CLIENT_ID,
-        connection: Config.AUTH0_CONNECTION,
+      let request = {
         email: requestData.email,
-      };
-
-      let forgotPassResponse = await HttpService.executeHTTPRequest(
-        httpConstants.METHOD_TYPE.POST,
-        Config.AUTH0_DOMAIN,
-        `dbconnections/change_password`,
-        requestObj,
-        headers
-      );
-
-      if (
-        (forgotPassResponse && forgotPassResponse.error) ||
-        forgotPassResponse.statusCode
-      )
-        throw Utils.error(
-          {},
-          forgotPassResponse.error || apiFailureMessage.RESET_PASSWORD_AUTH0,
-          httpConstants.RESPONSE_CODES.FORBIDDEN
-        );
-
-      return { message: forgotPassResponse };
+        password: this.generatePassword(),
+        userId: user.userId
+      }
+      let forgotPassResponse = await this.requestChangePassword(request)
+      if (forgotPassResponse.email && forgotPassResponse.email === requestData.email)
+        await this.sendDataToQueue("INOUT", forgotPassResponse, request, user);
+      return { result: `Email has been sent to ${forgotPassResponse.email}` };
     } catch (error) {
       throw error;
     }
   };
+
+
+
+  getMailNotificationResponse(type, user , request) {
+    return {
+      "title": "Reset Password [XDC Explorer]",
+      "description": EmailTemplate.createEmail(user.name, user.name, request.password),
+      "timestamp": Date.now(),
+      "userID": user.userId,
+      "postedTo": user.email,
+      "postedBy": 'Xinfin Explorer',
+      "payload": { user: user.userId },
+      "type": genericConstants.NOTIFICATION_TYPE.EMAIL,
+      "sentFromEmail": Config.POSTED_BY,
+      "sentFromName": "XIN FIN Explorer",
+      "addedOn": Date.now(),
+      "isSendGrid": true
+    }
+  }
+  async sendDataToQueue(type, forgotPassResponse, request, user) {
+
+    let mailNotificationRes = this.getMailNotificationResponse(type, user , request)
+    let rabbitMqController = new RabbitMqController();
+    Utils.lhtLog("sendDataToQueue", "sendDataToQueue", {}, "kajal", httpConstants.LOG_LEVEL_TYPE.INFO)
+    await rabbitMqController.insertInQueue(Config.NOTIFICATION_EXCHANGE, Config.NOTIFICATION_QUEUE, "", "", "", "", "", amqpConstants.exchangeType.FANOUT, amqpConstants.queueType.PUBLISHER_SUBSCRIBER_QUEUE, JSON.stringify(mailNotificationRes));
+
+  }
+
+  generatePassword() {
+    var length = 8,
+      charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+      retVal = "";
+    for (var i = 0, n = charset.length; i < length; ++i) {
+      retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    return retVal;
+  }
+
+
+  async requestChangePassword(requestData) {
+    //  changePassword Function business logic
+    const [accessTokenError, accessToken] = await Utils.parseResponse(this.getManagementAccessToken());
+    if (!accessToken)
+      throw Utils.error({}, accessTokenError || apiFailureMessage.INVALID_PARAMS,
+        httpConstants.RESPONSE_CODES.FORBIDDEN);
+    let headers = {
+      Authorization: `Bearer ${accessToken}`,
+      "content-type": httpConstants.HEADER_TYPE.APPLICATION_JSON
+    }
+    let requestObj = {
+      password: requestData.password,
+      connection: 'Username-Password-Authentication'
+    }
+    const resetPassResponse = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.PATCH, Config.AUTH0_DOMAIN, `api/v2/users/${requestData.userId}`, requestObj, headers);
+    if (resetPassResponse && resetPassResponse.error || resetPassResponse.statusCode)
+      throw Utils.error(resetPassResponse, resetPassResponse.error || apiFailureMessage.RESET_PASSWORD_AUTH0, httpConstants.RESPONSE_CODES.FORBIDDEN);
+    return resetPassResponse;
+  }
+
+
   signUp = async (requestData) => {
     try {
       if (
@@ -379,14 +423,14 @@ export default class Manager {
     }
   };
   logOut = async (requestData) => {
-    
+
     if (!requestData)
-    throw Utils.error(
+      throw Utils.error(
         {},
         apiFailureMessage.INVALID_PARAMS,
         httpConstants.RESPONSE_CODES.FORBIDDEN
-    );
-try{
+      );
+    try {
       let userDetails = await UserModel.findOne({ userId: requestData.userId });
       if (!userDetails) {
         throw apiFailureMessage.USER_DOES_NOT_EXISTS;
@@ -427,6 +471,6 @@ try{
   };
 
 
-  
+
 
 }
