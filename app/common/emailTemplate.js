@@ -124,7 +124,7 @@ static createEmail(name, username, password) {
     </head>
     
     <body>
-    <div>
+    <div style="display:flex, justify-content:center">
         <div style="height: 100% !important; margin: 0; padding: 0">
             <table style="
           width: 600px;

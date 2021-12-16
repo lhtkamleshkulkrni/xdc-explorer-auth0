@@ -250,9 +250,11 @@ export default class Manager {
         userId: user.userId
       }
       let forgotPassResponse = await this.requestChangePassword(request)
-      if (forgotPassResponse.email && forgotPassResponse.email === requestData.email)
+      if (forgotPassResponse.email) {
         await this.sendDataToQueue("INOUT", forgotPassResponse, request, user);
-      return { result: `Email has been sent to ${forgotPassResponse.email}` };
+        return { result: `Email has been sent to ${forgotPassResponse.email}` };
+      }
+      throw "Unable to request reset password"
     } catch (error) {
       throw error;
     }
@@ -260,7 +262,7 @@ export default class Manager {
 
 
 
-  getMailNotificationResponse(type, user , request) {
+  getMailNotificationResponse(type, user, request) {
     return {
       "title": "Reset Password [XDC Explorer]",
       "description": EmailTemplate.createEmail(user.name, user.name, request.password),
@@ -278,7 +280,7 @@ export default class Manager {
   }
   async sendDataToQueue(type, forgotPassResponse, request, user) {
 
-    let mailNotificationRes = this.getMailNotificationResponse(type, user , request)
+    let mailNotificationRes = this.getMailNotificationResponse(type, user, request)
     let rabbitMqController = new RabbitMqController();
     Utils.lhtLog("sendDataToQueue", "sendDataToQueue", {}, "kajal", httpConstants.LOG_LEVEL_TYPE.INFO)
     await rabbitMqController.insertInQueue(Config.NOTIFICATION_EXCHANGE, Config.NOTIFICATION_QUEUE, "", "", "", "", "", amqpConstants.exchangeType.FANOUT, amqpConstants.queueType.PUBLISHER_SUBSCRIBER_QUEUE, JSON.stringify(mailNotificationRes));
@@ -293,19 +295,19 @@ export default class Manager {
     var password = "";
     var character = "";
     var crunch = true;
-    while( password.length<length ) {
-        let entity1 = Math.ceil(string.length * Math.random()*Math.random());
-        let entity2 = Math.ceil(numeric.length * Math.random()*Math.random());
-        let entity3 = Math.ceil(punctuation.length * Math.random()*Math.random());
-        let hold = string.charAt( entity1 );
-        hold = (password.length%2==0)?(hold.toUpperCase()):(hold);
-        character += hold;
-        character += numeric.charAt( entity2 );
-        character += punctuation.charAt( entity3 );
-        password = character;
+    while (password.length < length) {
+      let entity1 = Math.ceil(string.length * Math.random() * Math.random());
+      let entity2 = Math.ceil(numeric.length * Math.random() * Math.random());
+      let entity3 = Math.ceil(punctuation.length * Math.random() * Math.random());
+      let hold = string.charAt(entity1);
+      hold = (password.length % 2 == 0) ? (hold.toUpperCase()) : (hold);
+      character += hold;
+      character += numeric.charAt(entity2);
+      character += punctuation.charAt(entity3);
+      password = character;
     }
-    password=password.split('').sort(function(){return 0.5-Math.random()}).join('');
-    return password.substr(0,len);
+    password = password.split('').sort(function () { return 0.5 - Math.random() }).join('');
+    return password.substr(0, len);
   }
 
 
