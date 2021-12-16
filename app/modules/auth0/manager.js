@@ -285,14 +285,27 @@ export default class Manager {
 
   }
 
-  generatePassword() {
-    var length = 8,
-      charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-      retVal = "";
-    for (var i = 0, n = charset.length; i < length; ++i) {
-      retVal += charset.charAt(Math.floor(Math.random() * n));
+  generatePassword(len) {
+    var length = 10
+    var string = "abcdefghijklmnopqrstuvwxyz"; //to upper 
+    var numeric = '0123456789';
+    var punctuation = '!@#$%^&*()_+~`|}{[]\:;?><,./-=';
+    var password = "";
+    var character = "";
+    var crunch = true;
+    while( password.length<length ) {
+        let entity1 = Math.ceil(string.length * Math.random()*Math.random());
+        let entity2 = Math.ceil(numeric.length * Math.random()*Math.random());
+        let entity3 = Math.ceil(punctuation.length * Math.random()*Math.random());
+        let hold = string.charAt( entity1 );
+        hold = (password.length%2==0)?(hold.toUpperCase()):(hold);
+        character += hold;
+        character += numeric.charAt( entity2 );
+        character += punctuation.charAt( entity3 );
+        password = character;
     }
-    return retVal;
+    password=password.split('').sort(function(){return 0.5-Math.random()}).join('');
+    return password.substr(0,len);
   }
 
 
