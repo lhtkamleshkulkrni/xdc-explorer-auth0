@@ -27,7 +27,7 @@ static createEmail(name, username, password) {
             }
         
             .header {
-                display: flex;
+                display: block;
                 justify-content: center;
                 width: 100%;
                 /* margin: 0 0 50px; */
@@ -124,16 +124,14 @@ static createEmail(name, username, password) {
         </head>
         
         <body>
-        <div style="display:flex, justify-content:center">
-            <div style="height: 100% !important; margin: 0; padding: 0">
+        <div>
+            <div style="height: 100% !important; display:block; justify-content: center !important; width:100%;">
                 <table style="
               width: 600px;
               -webkit-text-size-adjust: 100%;
               -ms-text-size-adjust: 100%;
               mso-table-lspace: 0pt;
               mso-table-rspace: 0pt;
-              margin: 0;
-              padding: 0;
               font-family: 'Inter', sans-serif;
               border-collapse: collapse !important;
               height: 37.8125rem !important;
@@ -149,6 +147,7 @@ static createEmail(name, username, password) {
                                 style="width: 80px; height: 30px; margin-top:20px" />
                             <div class="main">
                                 <div class="header">
+                                    <div style="display:flex; margin: auto; width: 230px;">
                                     <img src="https://lmeqebp7fj.execute-api.us-east-1.amazonaws.com/testnet/get?fileName=xinfin-explorer-s3/forgotPassword/1639111317425_dvFwN9eDZT.png"
                                         style="
                           width: 30px;
@@ -157,6 +156,7 @@ static createEmail(name, username, password) {
                           border-radius: 50px;
                         " />
                                     <div class="account-recovery">Account Recovery</div>
+                                    </div>
                                 </div>
                                 <p class="p">Hi ${name} ,</p>
         
