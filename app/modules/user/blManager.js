@@ -101,6 +101,7 @@ export default class BlManager {
 
 
         try {
+            requestData.name = requestData.name.toLowerCase();
             let userDetail = await UserSchema.find({name: requestData.name});
 
             if (userDetail && userDetail.length) {
