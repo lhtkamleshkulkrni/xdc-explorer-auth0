@@ -106,6 +106,7 @@ export const apiSuccessMessage = {
   USER_ADD_SUCCESS:"User added successfully",
   USER_COOKIES_ADD_SUCCESS: 'User cookies add successfully',
   USER_COOKIES_GET_SUCCESS: 'User cookies fetched successfully',
+  USER_COOKIES_UPDATE_SUCCESS: 'User cookies updated successfully',
   FETCH_SUCCESS: 'Information fetched successfully',
   USER_UPDATE_SUCCESS:'user updated successfully',
   USER_LOGOUT_SUCCESS:'user logout successfully',

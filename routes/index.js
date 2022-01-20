@@ -25,4 +25,5 @@ module.exports = (app) => {
     app.post('/sign-up', new UserController().signUp);
     app.post('/add-user-cookies', ValidationManger.validateAddUserCookies, new UserController().addUserCookies);
     app.post('/get-user-cookies', new UserController().getUserCookies);
+    app.post('/update-user-cookies', new UserController().updateUserCookies);
 };
