@@ -89,7 +89,38 @@ export default class UserController {
     }
   }
 
+async addUserCookies(request, response){
+  if (!request || !request.body)
+    throw Utils.handleError({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
 
+  const [error, addUserCookiesResponse] = await Utils.parseResponse(new BLManager().addUserCookies(request.body));
+  if (error) {
+    return Utils.handleError(error, request, response);
+  }
 
-  
+  return Utils.response(
+      response,
+      addUserCookiesResponse,
+      apiSuccessMessage.USER_COOKIES_ADD_SUCCESS,
+      httpConstants.RESPONSE_STATUS.SUCCESS,
+      httpConstants.RESPONSE_CODES.OK
+  );
+}
+  async getUserCookies(request, response) {
+    if (!request || !request.body)
+      throw Utils.handleError({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
+
+    const [error, getUserCookiesResponse] = await Utils.parseResponse(new BLManager().getCookiesOfUser(request.body));
+    if (error) {
+      return Utils.handleError(error, request, response);
+    }
+
+    return Utils.response(
+        response,
+        getUserCookiesResponse,
+        apiSuccessMessage.USER_COOKIES_GET_SUCCESS,
+        httpConstants.RESPONSE_STATUS.SUCCESS,
+        httpConstants.RESPONSE_CODES.OK
+    );
+  }
 }

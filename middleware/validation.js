@@ -9,6 +9,13 @@ module.exports = {
     })
     await validate(schema, req.body, res, next)
   },
+  validateAddUserCookies: async (req, res, next)=>{
+    const schema = yup.object().shape({
+      userId: yup.string().required(),
+      cookiesAllowed: yup.array().required()
+    })
+    await validate(schema, req.body, res, next)
+  },
   validateEmail: async (req, res, next) => {
     const schema = yup.object().shape({
       email: yup.string().email().required(),

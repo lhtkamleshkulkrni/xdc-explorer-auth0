@@ -23,4 +23,6 @@ module.exports = (app) => {
     app.post("/change-password", new AuthenticationController().changePassword);
     
     app.post('/sign-up', new UserController().signUp);
+    app.post('/add-user-cookies', ValidationManger.validateAddUserCookies, new UserController().addUserCookies);
+    app.post('/get-user-cookies', new UserController().getUserCookies);
 };
