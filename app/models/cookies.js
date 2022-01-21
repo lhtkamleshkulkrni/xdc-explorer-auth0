@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 let Schema = mongoose.Schema;
 let UserCookiesSchema = new Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "xin-users" },
+    userId: { type: String, default: "" },
     cookiesAllowed:[{ type: String, default: "" }],
     isDeleted: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
@@ -31,8 +31,12 @@ UserCookiesSchema.static({
             .limit(limit);
     },
 
-    findAndUpdateData: function (findObj, updateObj) {
+    findOneAndUpdateData: function (findObj, updateObj) {
         return this.findOneAndUpdate(findObj, updateObj, { new: true });
+    },
+
+    findAndUpdateData: function (findObj, updateObj) {
+        return this.update(findObj, updateObj, {upsert: true});
     },
 });
 
