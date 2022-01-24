@@ -265,16 +265,16 @@ export default class Manager {
 
     getMailNotificationResponse(type, user, request) {
         return {
-            "title": "Reset Password [XDC Explorer]",
+            "title": "Reset Password [XDC Observatory]",
             "description": EmailTemplate.createEmail(user.name, user.name, request.password),
             "timestamp": Date.now(),
             "userID": user.userId,
             "postedTo": user.email,
-            "postedBy": 'Xinfin Explorer',
+            "postedBy": 'XDC Observatory',
             "payload": {user: user.userId},
             "type": genericConstants.NOTIFICATION_TYPE.EMAIL,
             "sentFromEmail": Config.POSTED_BY,
-            "sentFromName": "XIN FIN Explorer",
+            "sentFromName": "XDC Observatory",
             "addedOn": Date.now(),
             "isSendGrid": true
         }
