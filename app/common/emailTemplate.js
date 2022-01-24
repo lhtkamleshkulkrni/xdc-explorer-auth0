@@ -189,7 +189,7 @@ static createEmail(name, username, password) {
                                 <p class="p">Team XDC</p>
                             </div>
                             <div class="footer">
-                                <p class="copyright">© 2021 XDC Network. All Rights Reserved.</p>
+                                <p class="copyright">© 2022 XDC Foundation. All Rights Reserved.</p>
                                 <p class="Unsubscribe">Unsubscribe | Privacy Policy</p>
                             </div>
                         </td>
