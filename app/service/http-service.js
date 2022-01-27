@@ -10,7 +10,7 @@ class HTTPService {
         url: hostname + path,
         method: method,
         headers: headers,
-        body: data
+        json: data
       }, function (error, response, body) {
         // console.log('body:-', body);
         if (error) {
