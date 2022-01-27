@@ -143,4 +143,22 @@ export default class UserController {
             httpConstants.RESPONSE_CODES.OK
         );
     }
+
+    async getGlobalIdUserInfo(request, response) {
+        if (!request || !request.body)
+            throw Utils.handleError({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
+
+        const [error, updateUserCookiesResponse] = await Utils.parseResponse(new BLManager().globalIdUserInfo(request.body));
+        if (error) {
+            return Utils.handleError(error, request, response);
+        }
+
+        return Utils.response(
+            response,
+            updateUserCookiesResponse,
+            apiSuccessMessage.FETCH_SUCCESS,
+            httpConstants.RESPONSE_STATUS.SUCCESS,
+            httpConstants.RESPONSE_CODES.OK
+        );
+    }
 }

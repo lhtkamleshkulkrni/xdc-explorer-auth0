@@ -26,4 +26,10 @@ module.exports = (app) => {
     app.post('/add-user-cookies', ValidationManger.validateAddUserCookies, new UserController().addUserCookies);
     app.post('/get-user-cookies', new UserController().getUserCookies);
     app.post('/update-user-cookies', new UserController().updateUserCookies);
+
+    /**
+     * globalID APIs
+     */
+
+    app.post('/get-globalid-user-info', new UserController().getGlobalIdUserInfo);
 };
