@@ -21,7 +21,7 @@ let UserSchema = new Schema({
       "REJECTED",
     ],
   },
-
+  authenticationProvider:{type: String, default: "" },
   isDeleted: { type: Boolean, default: false },
   isActive: { type: Boolean, default: true },
   addedOn: { type: Number, default: Date.now() },
