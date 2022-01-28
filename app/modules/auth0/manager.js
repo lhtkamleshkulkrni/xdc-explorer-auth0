@@ -357,6 +357,7 @@ export default class Manager {
                 given_name: requestData.name,
                 name: requestData.name,
                 nickname: requestData.name,
+                username: requestData.name
             };
 
             let accessToken = await this.getAccessToken();
