@@ -101,44 +101,39 @@ export default class BlManager {
                 apiFailureMessage.INVALID_PARAMS,
                 httpConstants.RESPONSE_CODES.FORBIDDEN
             );
-        const pass = requestData.password
-
-
+        // const pass = requestData.password
         try {
-            requestData.name = requestData.name.toLowerCase();
-            let userDetail = await UserSchema.find({name: requestData.name});
+            // requestData.name = requestData.name.toLowerCase();
+            // let userDetail = await UserSchema.find({name: requestData.name});
 
-            if (userDetail && userDetail.length) {
-                throw Utils.error(
-                    {},
-                    apiFailureMessage.USER_NAME_ALREADY_EXISTS,
-                    httpConstants.RESPONSE_CODES.FORBIDDEN
-                );
-            }
+            // if (userDetail && userDetail.length) {
+            //     throw Utils.error(
+            //         {},
+            //         apiFailureMessage.USER_NAME_ALREADY_EXISTS,
+            //         httpConstants.RESPONSE_CODES.FORBIDDEN
+            //     );
+            // }
 
-            const [error, addUserRes] = await Utils.parseResponse(
-                new AuthBLManager().signUp(requestData)
-            );
-
-            requestData["userId"] = addUserRes.userId;
-            let hashPass = hash.MD5(pass)
-            requestData["password"] = hashPass
+            // const [error, addUserRes] = await Utils.parseResponse(
+            //     new AuthBLManager().signUp(requestData)
+            // );
+            requestData["userId"] = requestData.userId ? requestData.userId: "";
+            // let hashPass = hash.MD5(pass)
+            // requestData["password"] = hashPass
             let userModel = new UserSchema(requestData);
-
             let userRes = await userModel.save()
-
-            if (error)
-                throw Utils.error(
-                    {},
-                    error.message || apiFailureMessage.USER_CREATE_AUTH0,
-                    httpConstants.RESPONSE_CODES.FORBIDDEN
-                );
+            // if (error)
+            //     throw Utils.error(
+            //         {},
+            //         error.message || apiFailureMessage.USER_CREATE_AUTH0,
+            //         httpConstants.RESPONSE_CODES.FORBIDDEN
+            //     );
 
             return userRes;
         } catch (error) {
             throw Utils.error(
                 {},
-                apiFailureMessage.USER_ALREADY_EXISTS,
+                error && error.message ? error.message :  apiFailureMessage.USER_ALREADY_EXISTS,
                 httpConstants.RESPONSE_CODES.FORBIDDEN
             );
         }
