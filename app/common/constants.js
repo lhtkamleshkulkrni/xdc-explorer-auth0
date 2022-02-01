@@ -137,6 +137,13 @@ export const apiFailureMessage = {
   USER_ALREADY_EXISTS:'user alraedy exist',
   USER_NAME_ALREADY_EXISTS:"user name already exists",
   USER_MAIL_ALREADY_EXISTS:"user name already exists",
-  USER_DOES_NOT_EXISTS:'user does not exist'
+  USER_DOES_NOT_EXISTS:'user does not exist',
+  NO_EMAIL_FOUND:'No email found'
   
+}
+
+export const globalIdConstants = {
+  phone_country:"phoneCountry",
+  phone_number:"phoneNumber",
+  email:"email"
 }

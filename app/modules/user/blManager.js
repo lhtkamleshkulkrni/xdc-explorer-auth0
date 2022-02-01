@@ -11,17 +11,19 @@ import {
     httpConstants,
     portalType,
     statusConstant,
-    statusConstants
+    statusConstants,
+    globalIdConstants
 } from "../../common/constants";
 import Utils from "../../utils";
 import AuthenticationController from "../auth0";
 import AuthBLManager from "../auth0/manager";
 import Config from '../../../config';
 import HttpService from "../../service/http-service";
-import * as globalidCrypto from 'globalid-crypto-library';
+// import * as globalidCrypto from 'globalid-crypto-library';
+import * as gidCrypto from 'globalid-crypto-library'
 import fs from "fs";
 import * as jwt from 'jsonwebtoken'
-import {filter, isEmpty, flattenDeep, map} from 'lodash'
+import {filter, isEmpty, flattenDeep, map, _} from 'lodash'
 
 const hash = require("object-hash");
 export default class BlManager {
@@ -161,12 +163,52 @@ export default class BlManager {
     }
 
     globalIdUserInfo = async (requestData) => {
-        if (!requestData || !requestData.id_token || !requestData.accessToken)
+        try{
+        if (!requestData || !requestData.idToken || !requestData.accessToken)
             throw Utils.error({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
-        let claims = await this.decryptClainTokens(requestData.id_token, requestData.access_token);
-        return claims;
+        let claims = await this.decryptClainTokens(requestData.idToken, requestData.accessToken);
+        if(!claims || !claims.length || !claims[0].length)
+            throw Utils.error({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
+        claims = claims[0];    
+        const email = claims.find( claim => {
+            if(claim.type === "email" && claim.value) return claim.value;
+        } );
+        if(!email)
+            throw Utils.error({}, apiFailureMessage.NO_EMAIL_FOUND, httpConstants.RESPONSE_CODES.FORBIDDEN);  
+            
+        const checkUser = await UserSchema.getUserDetails({email:email.value, authenticationProvider:"GLOBALID"})
+        if(checkUser)  
+            return checkUser;
+        return await this.globalIdSignUp(requestData, claims);
+        }catch(error){
+            throw error;
+        }
     }
 
+    globalIdSignUp =async (requestData,claims) =>{
+        try{
+        let responseData = {}
+        let identities = await this.getUserIdentities(requestData.accessToken)
+        identities = JSON.parse(identities); 
+        claims.map(claim=>{
+            if(claim.type && claim.value) 
+               responseData = {...responseData , [globalIdConstants[claim.type]]:claim.value}
+        });   
+       responseData= {...responseData ,
+             userId: identities.gid_uuid ,
+             name: identities.gid_name,
+             profilePic:identities.display_image_url,
+             authenticationProvider:"GLOBALID",
+             countryName:identities.country_name,
+             countryCode:identities.country_code
+           }     
+       let userModel = new UserSchema(responseData);
+       let userRes = await userModel.save();
+       return userRes;
+        }catch(error){
+            throw error;
+        }
+    }
     getGlobalIdTokens= async (requestData) => {
         if (!requestData || !requestData.code)
             throw Utils.error({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
@@ -190,10 +232,17 @@ export default class BlManager {
             "code": codes,
             "redirect_uri": Config.GLOBAL_ID_REDIRECT_URL
         }
-        return await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, URL, "", JSON.stringify(data), headers);
+        return await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, URL, "",data, headers);
     }
 
-
+    async getUserIdentities(accessToken) {
+        let URL ="https://api.global.id/v1/identities/me";
+        let headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        };
+        return await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.GET, URL, "",{}, headers);
+    }
    
     async getTokensForThePII(id_token) {
         const decoded_token = jwt.decode(id_token);
@@ -226,16 +275,16 @@ export default class BlManager {
     }
 
 
-    async claimTokenUsingIdToken(idToken) {
-        idToken = "REMOVED";
-        try {
-            let password = fs.readFileSync(__dirname + "/private.key")
-            const result = globalidCrypto.RSA.decrypt(password.toString('utf8'), "observer");
-            console.log("result", result);
-        } catch (err) {
-            console.log("err", err);
-        }
-    }
+    // async claimTokenUsingIdToken(idToken) {
+    //     idToken = "REMOVED";
+    //     try {
+    //         let password = fs.readFileSync(__dirname + "/private.key")
+    //         const result = globalidCrypto.RSA.decrypt(password.toString('utf8'), "observer");
+    //         console.log("result", result);
+    //     } catch (err) {
+    //         console.log("err", err);
+    //     }
+    // }
 
 
     async decryptClainTokens(idToken, accessToken) {
