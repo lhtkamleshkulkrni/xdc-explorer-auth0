@@ -32,4 +32,5 @@ module.exports = (app) => {
      */
 
     app.post('/get-globalid-user-info', new UserController().getGlobalIdUserInfo);
+    app.get('/get-globalid-tokens', new UserController().getGlobalIdTokens);
 };

@@ -8,7 +8,10 @@ let UserSchema = new Schema({
   password: { type: String, default: "" },
   profilePic: { type: String, default: "" },
   pushToken: { type: String, default: "" },
-
+  phoneCountry:{ type: String, default: "" },
+  phoneNumber:{ type: String, default: "" },
+  countryName:{ type: String, default: "" },
+  countryCode:{ type: String, default: "" },
   status: {
     type: String,
     default: "ACTIVE",
