@@ -161,6 +161,11 @@ export default class BlManager {
             throw Utils.error({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
         return UserCookiesSchema.findAndUpdateData({userId: requestData.userId}, {cookiesAllowed:requestData.cookiesAllowed});
     }
+    privacyConsent = async (requestData) => {
+        if (!requestData || !requestData.userId)
+            throw Utils.error({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
+        return  UserCookiesSchema.findOneAndUpdateData({userId: requestData.userId}, {privacyConsent:requestData.privacyConsent});
+    }
 
     globalIdUserInfo = async (requestData) => {
         try{

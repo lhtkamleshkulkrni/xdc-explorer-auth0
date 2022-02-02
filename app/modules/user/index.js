@@ -144,6 +144,24 @@ export default class UserController {
         );
     }
 
+    async privacyConsent(request, response) {
+        if (!request || !request.body)
+            throw Utils.handleError({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
+
+        const [error, updateUserCookiesResponse] = await Utils.parseResponse(new BLManager().privacyConsent(request.body));
+        if (error) {
+            return Utils.handleError(error, request, response);
+        }
+
+        return Utils.response(
+            response,
+            updateUserCookiesResponse,
+            apiSuccessMessage.USER_COOKIES_UPDATE_SUCCESS,
+            httpConstants.RESPONSE_STATUS.SUCCESS,
+            httpConstants.RESPONSE_CODES.OK
+        );
+    }
+
     async getGlobalIdUserInfo(request, response) {
         if (!request || !request.body)
             throw Utils.handleError({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);

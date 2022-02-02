@@ -26,6 +26,7 @@ module.exports = (app) => {
     app.post('/add-user-cookies', ValidationManger.validateAddUserCookies, new UserController().addUserCookies);
     app.post('/get-user-cookies', new UserController().getUserCookies);
     app.post('/update-user-cookies', new UserController().updateUserCookies);
+    app.post('/privacy-consent', ValidationManger.validatePrivacyConsent, new UserController().privacyConsent);
 
     /**
      * globalID APIs

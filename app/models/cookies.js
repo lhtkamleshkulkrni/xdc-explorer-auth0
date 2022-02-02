@@ -4,6 +4,7 @@ let Schema = mongoose.Schema;
 let UserCookiesSchema = new Schema({
     userId: { type: String, default: "" },
     cookiesAllowed:[{ type: String, default: "" }],
+    privacyConsent: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     addedOn: { type: Number, default: Date.now() },
