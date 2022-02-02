@@ -172,8 +172,10 @@ export default class BlManager {
         if (!requestData || !requestData.idToken || !requestData.accessToken)
             throw Utils.error({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
         let claims = await this.decryptClainTokens(requestData.idToken, requestData.accessToken);
-        if(!claims || !claims.length || !claims[0].length)
+        if(!claims || !claims.length )
             throw Utils.error({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
+        if(!claims[0] || !claims[0].length)    
+            throw Utils.error({}, `Please verify your email id on GlobalId App`, httpConstants.RESPONSE_CODES.FORBIDDEN);
         claims = claims[0];    
         const email = claims.find( claim => {
             if(claim.type === "email" && claim.value) return claim.value;
