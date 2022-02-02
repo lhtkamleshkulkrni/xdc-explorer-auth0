@@ -261,7 +261,7 @@ export default class BlManager {
     }
 
     async decryptedConsent(consent) {
-        console.log("consent", consent);
+        // console.log("consent", consent);
         // let privates=process.env.PRIVATE_KEY;
         return Promise.all(
             _.map(consent, async (values) =>
@@ -306,6 +306,9 @@ export default class BlManager {
         })
 
         let result = [];
+        if(!data || !data.length)
+            return;
+            // throw Utils.error({}, `Please verify your email in GlobalId App`, httpConstants.RESPONSE_CODES.FORBIDDEN);
         for (let index = 0; index < data.length; index++) {
             const obj = await this.getPIIData(data[index], accessToken)
             result.push(JSON.parse(obj));
@@ -320,17 +323,17 @@ export default class BlManager {
         return response;
     }
 
-    async decryptedConsent(consent) {
-        return Promise.all(
-            _.map(consent, async (values) =>
-                Promise.all(
-                    _.map(values, async (value) =>
-                        gidCrypto.RSA.decrypt(Config.PRIVATE_KEY, value)
-                    ),
-                ),
-            ),
-        )
-    }
+    // async decryptedConsent(consent) {
+    //     return Promise.all(
+    //         _.map(consent, async (values) =>
+    //             Promise.all(
+    //                 _.map(values, async (value) =>
+    //                     gidCrypto.RSA.decrypt(Config.PRIVATE_KEY, value)
+    //                 ),
+    //             ),
+    //         ),
+    //     )
+    // }
 
 
     async getPIIData(codes, accessToken) {
