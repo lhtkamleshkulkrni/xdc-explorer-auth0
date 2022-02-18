@@ -253,6 +253,7 @@ export default class Manager {
                 userId: user.userId
             }
             let forgotPassResponse = await this.requestChangePassword(request)
+            forgotPassResponse = JSON.parse(forgotPassResponse)
             if (forgotPassResponse.email) {
                 await this.sendDataToQueue("INOUT", forgotPassResponse, request, user);
                 return {result: `Email has been sent to ${forgotPassResponse.email}`};
@@ -318,7 +319,7 @@ export default class Manager {
 
     async requestChangePassword(requestData) {
         //  changePassword Function business logic
-        const [accessTokenError, accessToken] = await Utils.parseResponse(this.getManagementAccessToken());
+        let [accessTokenError, accessToken] = await Utils.parseResponse(this.getManagementAccessToken());
         accessToken = JSON.parse(accessToken)
         if (!accessToken)
             throw Utils.error({}, accessTokenError || apiFailureMessage.INVALID_PARAMS,
@@ -329,7 +330,7 @@ export default class Manager {
         }
         let requestObj = {
             password: requestData.password,
-            connection: 'Username-Password-Authentication'
+            connection: Config.AUTH0_CONNECTION
         }
         const resetPassResponse = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.PATCH, Config.AUTH0_DOMAIN, `api/v2/users/${requestData.userId}`, requestObj, headers);
         if (resetPassResponse && resetPassResponse.error || resetPassResponse.statusCode)
