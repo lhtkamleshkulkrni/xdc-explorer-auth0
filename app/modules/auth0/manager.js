@@ -27,7 +27,7 @@ export default class Manager {
         const headers = {
             "Content-Type": httpConstants.HEADER_TYPE.APPLICATION_JSON,
         };
-        const accessTokenResponse = await HttpService.executeHTTPRequest(
+        let accessTokenResponse = await HttpService.executeHTTPRequest(
             httpConstants.METHOD_TYPE.POST,
             Config.AUTH0_DOMAIN,
             "oauth/token",
@@ -36,7 +36,7 @@ export default class Manager {
         ).catch((err) => {
             throw err;
         });
-
+        accessTokenResponse = JSON.parse(accessTokenResponse)
         if (
             accessTokenResponse &&
             (accessTokenResponse.error || accessTokenResponse.error_description)
@@ -115,14 +115,14 @@ export default class Manager {
                 apiFailureMessage.INVALID_PARAMS,
                 httpConstants.RESPONSE_CODES.FORBIDDEN
             );
-        return accessTokenResponse.access_token;
+        return accessTokenResponse;
     };
 
     async signIn(request) {
         try {
             request.name = request.name.toLowerCase();
             let userDetail = await UserSchema.find({name: request.name});
-
+            
             const accessToken = await this.getAccessTokenSignIn(
                 userDetail[0].email,
                 request.password
@@ -204,8 +204,9 @@ export default class Manager {
 
     updateUser = async (request) => {
         let accessToken = await this.getManagementAccessToken();
+        accessToken = JSON.parse(accessToken)
         const headers = {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken.access_token}`,
             "content-type": "application/json",
         };
 
@@ -252,6 +253,7 @@ export default class Manager {
                 userId: user.userId
             }
             let forgotPassResponse = await this.requestChangePassword(request)
+            forgotPassResponse = JSON.parse(forgotPassResponse)
             if (forgotPassResponse.email) {
                 await this.sendDataToQueue("INOUT", forgotPassResponse, request, user);
                 return {result: `Email has been sent to ${forgotPassResponse.email}`};
@@ -317,17 +319,18 @@ export default class Manager {
 
     async requestChangePassword(requestData) {
         //  changePassword Function business logic
-        const [accessTokenError, accessToken] = await Utils.parseResponse(this.getManagementAccessToken());
+        let [accessTokenError, accessToken] = await Utils.parseResponse(this.getManagementAccessToken());
+        accessToken = JSON.parse(accessToken)
         if (!accessToken)
             throw Utils.error({}, accessTokenError || apiFailureMessage.INVALID_PARAMS,
                 httpConstants.RESPONSE_CODES.FORBIDDEN);
         let headers = {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken.access_token}`,
             "content-type": httpConstants.HEADER_TYPE.APPLICATION_JSON
         }
         let requestObj = {
             password: requestData.password,
-            connection: 'Username-Password-Authentication'
+            connection: Config.AUTH0_CONNECTION
         }
         const resetPassResponse = await HttpService.executeHTTPRequest(httpConstants.METHOD_TYPE.PATCH, Config.AUTH0_DOMAIN, `api/v2/users/${requestData.userId}`, requestObj, headers);
         if (resetPassResponse && resetPassResponse.error || resetPassResponse.statusCode)
@@ -402,15 +405,20 @@ export default class Manager {
                 throw apiFailureMessage.USER_NOT_EXISTS;
             }
             try {
-                await this.logIn(userDetails.email, requestData.oldPassword);
+                let req = {
+                    name: userDetails.name,
+                    password: requestData.oldPassword
+                }
+                let res = await this.signIn(req);
                 // await Utils.parseResponse(new BlManager().signIn(userDetails.email, requestData.oldPassword) );
             } catch (error) {
-                throw `You have entered wrong old password`;
+                throw `You have entered wrong current password`;
             }
 
             let accessToken = await this.getManagementAccessToken();
+            accessToken = JSON.parse(accessToken)
             const headers = {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${accessToken.access_token}`,
                 "content-type": "application/json",
             };
 
@@ -457,8 +465,9 @@ export default class Manager {
             }
 
             let accessToken = await this.getManagementAccessToken();
+            accessToken = JSON.parse(accessToken)
             const headers = {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${accessToken.access_token}`,
                 "content-type": "application/json",
             };
 
@@ -490,5 +499,5 @@ export default class Manager {
         }
     };
 
-
+    
 }
