@@ -71,7 +71,7 @@ export default class AuthenticationController {
       return Utils.response(
         response,
         getRes,
-        apiSuccessMessage.EMAIL_UPDATED_SUCCESS,
+        apiSuccessMessage.PASSWORD_UPDATED_SUCCESS,
         httpConstants.RESPONSE_STATUS.SUCCESS,
         httpConstants.RESPONSE_CODES.OK
       );
