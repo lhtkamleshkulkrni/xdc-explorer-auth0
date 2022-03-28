@@ -243,7 +243,7 @@ export default class Manager {
                 !requestData.email
             )
                 throw apiFailureMessage.INVALID_PARAMS;
-            let user = await UserModel.findOne({email: requestData.email});
+            let user = await UserModel.findOne({email: requestData.email, authenticationProvider: "AUTH0"});
             if (!user) {
                 throw apiFailureMessage.USER_NOT_EXISTS;
             }
