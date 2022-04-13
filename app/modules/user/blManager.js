@@ -157,6 +157,7 @@ export default class BlManager {
     }
 
     updateCookiesOfUser = async(requestData)=>{
+        Utils.lhtLog('Auth0-srv: BL Manager', `update-user-cookies`, requestData, '', httpConstants.LOG_LEVEL_TYPE.INFO)
         if (!requestData || !requestData.userId || !requestData.cookiesAllowed)
             throw Utils.error({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
         return UserCookiesSchema.findAndUpdateData({userId: requestData.userId}, {cookiesAllowed:requestData.cookiesAllowed});

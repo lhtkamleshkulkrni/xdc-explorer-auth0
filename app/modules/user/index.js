@@ -127,6 +127,7 @@ export default class UserController {
     }
 
     async updateUserCookies(request, response) {
+        Utils.lhtLog('Auth0-srv: Index', `update-user-cookies`, request.body, '', httpConstants.LOG_LEVEL_TYPE.INFO)
         if (!request || !request.body)
             throw Utils.handleError({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
 
@@ -134,7 +135,7 @@ export default class UserController {
         if (error) {
             return Utils.handleError(error, request, response);
         }
-
+        Utils.lhtLog('Auth0-srv: Index', `update-user-cookies`, updateUserCookiesResponse, '', httpConstants.LOG_LEVEL_TYPE.INFO)
         return Utils.response(
             response,
             updateUserCookiesResponse,
