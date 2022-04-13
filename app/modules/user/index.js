@@ -1,202 +1,219 @@
 import Utils from "../../utils";
 import BLManager from "./blManager";
 import {
-    apiFailureMessage,
-    apiSuccessMessage,
-    genericConstants,
-    httpConstants,
+  apiFailureMessage,
+  apiSuccessMessage,
+  genericConstants,
+  httpConstants,
 } from "../../common/constants";
 
 export default class UserController {
-    async updateUser(request, response) {
-        try {
-            if (!request || !request.body || !request.body.userId)
-                throw Utils.error(
-                    {},
-                    apiFailureMessage.INVALID_PARAMS,
-                    httpConstants.RESPONSE_CODES.FORBIDDEN
-                );
-            const [error, addUserResponse] = await Utils.parseResponse(
-                new BLManager().updateUser(request.body)
-            );
-            if (error) {
-                return Utils.handleError(error, request, response);
-            }
-
-            return Utils.response(
-                response,
-                addUserResponse,
-                apiSuccessMessage.USER_UPDATE_SUCCESS,
-                httpConstants.RESPONSE_STATUS.SUCCESS,
-                httpConstants.RESPONSE_CODES.OK
-            );
-        } catch (error) {
-            return Utils.handleError(error, request, response);
-        }
-    }
-
-    async getUserByUserId(request, response) {
-        try {
-            if (!request || !request.body)
-                throw Utils.error(
-                    {},
-                    apiFailureMessage.INVALID_PARAMS,
-                    httpConstants.RESPONSE_CODES.FORBIDDEN
-                );
-            const [error, addUserResponse] = await Utils.parseResponse(
-                new BLManager().getUserByUserId(request.body)
-            );
-            if (error) {
-                return Utils.handleError(error, request, response);
-            }
-            return Utils.response(
-                response,
-                addUserResponse,
-                apiSuccessMessage.USER_GET_SUCCESS,
-                httpConstants.RESPONSE_STATUS.SUCCESS,
-                httpConstants.RESPONSE_CODES.OK
-            );
-        } catch (error) {
-            return Utils.handleError(error, request, response);
-        }
-    }
-
-    async signUp(request, response) {
-        try {
-            if (!request || !request.body)
-                throw Utils.handleError(
-                    {},
-                    apiFailureMessage.INVALID_PARAMS,
-                    httpConstants.RESPONSE_CODES.FORBIDDEN
-                );
-
-            const [error, addUserResponse] = await Utils.parseResponse(
-                new BLManager().signUp(request.body)
-            );
-
-            if (error) {
-                return Utils.handleError(error, request, response);
-            }
-
-            return Utils.response(
-                response,
-                addUserResponse,
-                apiSuccessMessage.USER_ADD_SUCCESS,
-                httpConstants.RESPONSE_STATUS.SUCCESS,
-                httpConstants.RESPONSE_CODES.OK
-            );
-        } catch (error) {
-            throw Utils.handleError(error, request, response);
-        }
-    }
-
-    async addUserCookies(request, response) {
-        if (!request || !request.body)
-            throw Utils.handleError({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
-
-        const [error, addUserCookiesResponse] = await Utils.parseResponse(new BLManager().addUserCookies(request.body));
-        if (error) {
-            return Utils.handleError(error, request, response);
-        }
-
-        return Utils.response(
-            response,
-            addUserCookiesResponse,
-            apiSuccessMessage.USER_COOKIES_ADD_SUCCESS,
-            httpConstants.RESPONSE_STATUS.SUCCESS,
-            httpConstants.RESPONSE_CODES.OK
+  async updateUser(request, response) {
+    try {
+      if (!request || !request.body || !request.body.userId)
+        throw Utils.error(
+          {},
+          apiFailureMessage.INVALID_PARAMS,
+          httpConstants.RESPONSE_CODES.FORBIDDEN
         );
+      const [error, addUserResponse] = await Utils.parseResponse(
+        new BLManager().updateUser(request.body)
+      );
+      if (error) {
+        return Utils.handleError(error, request, response);
+      }
+
+      return Utils.response(
+        response,
+        addUserResponse,
+        apiSuccessMessage.USER_UPDATE_SUCCESS,
+        httpConstants.RESPONSE_STATUS.SUCCESS,
+        httpConstants.RESPONSE_CODES.OK
+      );
+    } catch (error) {
+      return Utils.handleError(error, request, response);
     }
+  }
 
-    async getUserCookies(request, response) {
-        if (!request || !request.body)
-            throw Utils.handleError({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
-
-        const [error, getUserCookiesResponse] = await Utils.parseResponse(new BLManager().getCookiesOfUser(request.body));
-        if (error) {
-            return Utils.handleError(error, request, response);
-        }
-
-        return Utils.response(
-            response,
-            getUserCookiesResponse,
-            apiSuccessMessage.USER_COOKIES_GET_SUCCESS,
-            httpConstants.RESPONSE_STATUS.SUCCESS,
-            httpConstants.RESPONSE_CODES.OK
+  async getUserByUserId(request, response) {
+    try {
+      if (!request || !request.body)
+        throw Utils.error(
+          {},
+          apiFailureMessage.INVALID_PARAMS,
+          httpConstants.RESPONSE_CODES.FORBIDDEN
         );
+      const [error, addUserResponse] = await Utils.parseResponse(
+        new BLManager().getUserByUserId(request.body)
+      );
+      if (error) {
+        return Utils.handleError(error, request, response);
+      }
+      return Utils.response(
+        response,
+        addUserResponse,
+        apiSuccessMessage.USER_GET_SUCCESS,
+        httpConstants.RESPONSE_STATUS.SUCCESS,
+        httpConstants.RESPONSE_CODES.OK
+      );
+    } catch (error) {
+      return Utils.handleError(error, request, response);
+    }
+  }
+
+  async signUp(request, response) {
+    try {
+      const [error, addUserResponse] = await Utils.parseResponse(
+        new BLManager().signUp(request.body)
+      );
+
+      if (error) {
+        return Utils.handleError(error, request, response);
+      }
+
+      return Utils.response(
+        response,
+        addUserResponse,
+        apiSuccessMessage.USER_ADD_SUCCESS,
+        httpConstants.RESPONSE_STATUS.SUCCESS,
+        httpConstants.RESPONSE_CODES.OK
+      );
+    } catch (error) {
+      throw Utils.handleError(error, request, response);
+    }
+  }
+
+  async addUserCookies(request, response) {
+    if (!request || !request.body)
+      throw Utils.handleError(
+        {},
+        apiFailureMessage.INVALID_PARAMS,
+        httpConstants.RESPONSE_CODES.FORBIDDEN
+      );
+
+    const [error, addUserCookiesResponse] = await Utils.parseResponse(
+      new BLManager().addUserCookies(request.body)
+    );
+    if (error) {
+      return Utils.handleError(error, request, response);
     }
 
-    async updateUserCookies(request, response) {
-        Utils.lhtLog('Auth0-srv: Index', `update-user-cookies`, request.body, '', httpConstants.LOG_LEVEL_TYPE.INFO)
-        if (!request || !request.body)
-            throw Utils.handleError({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
+    return Utils.response(
+      response,
+      addUserCookiesResponse,
+      apiSuccessMessage.USER_COOKIES_ADD_SUCCESS,
+      httpConstants.RESPONSE_STATUS.SUCCESS,
+      httpConstants.RESPONSE_CODES.OK
+    );
+  }
 
-        const [error, updateUserCookiesResponse] = await Utils.parseResponse(new BLManager().updateCookiesOfUser(request.body));
-        Utils.lhtLog('Auth0-srv: Index', `update-user-cookies-res`, updateUserCookiesResponse, '', httpConstants.LOG_LEVEL_TYPE.INFO)
-        Utils.lhtLog('Auth0-srv: Index', `update-user-cookies-err`, error, '', httpConstants.LOG_LEVEL_TYPE.INFO)
-        if (error) {
-            return Utils.handleError(error, request, response);
-        }
-        return Utils.response(
-            response,
-            updateUserCookiesResponse,
-            apiSuccessMessage.USER_COOKIES_UPDATE_SUCCESS,
-            httpConstants.RESPONSE_STATUS.SUCCESS,
-            httpConstants.RESPONSE_CODES.OK
-        );
+  async getUserCookies(request, response) {
+    const [error, getUserCookiesResponse] = await Utils.parseResponse(
+      new BLManager().getCookiesOfUser(request.body)
+    );
+    if (error) {
+      return Utils.handleError(error, request, response);
     }
 
-    async privacyConsent(request, response) {
-        if (!request || !request.body)
-            throw Utils.handleError({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
+    return Utils.response(
+      response,
+      getUserCookiesResponse,
+      apiSuccessMessage.USER_COOKIES_GET_SUCCESS,
+      httpConstants.RESPONSE_STATUS.SUCCESS,
+      httpConstants.RESPONSE_CODES.OK
+    );
+  }
 
-        const [error, updateUserCookiesResponse] = await Utils.parseResponse(new BLManager().privacyConsent(request.body));
-        if (error) {
-            return Utils.handleError(error, request, response);
-        }
+  async updateUserCookies(request, response) {
+    try {
+      const [error, updateUserCookiesResponse] = await Utils.parseResponse(
+        new BLManager().updateCookiesOfUser(request.body)
+      );
 
-        return Utils.response(
-            response,
-            updateUserCookiesResponse,
-            apiSuccessMessage.USER_COOKIES_UPDATE_SUCCESS,
-            httpConstants.RESPONSE_STATUS.SUCCESS,
-            httpConstants.RESPONSE_CODES.OK
-        );
+      if (error) {
+        return Utils.handleError(error, request, response);
+      }
+      return Utils.response(
+        response,
+        updateUserCookiesResponse,
+        apiSuccessMessage.USER_COOKIES_UPDATE_SUCCESS,
+        httpConstants.RESPONSE_STATUS.SUCCESS,
+        httpConstants.RESPONSE_CODES.OK
+      );
+    } catch (error) {
+      return Utils.handleError(error, request, response);
+    }
+  }
+
+  async privacyConsent(request, response) {
+    if (!request || !request.body)
+      throw Utils.handleError(
+        {},
+        apiFailureMessage.INVALID_PARAMS,
+        httpConstants.RESPONSE_CODES.FORBIDDEN
+      );
+
+    const [error, updateUserCookiesResponse] = await Utils.parseResponse(
+      new BLManager().privacyConsent(request.body)
+    );
+    if (error) {
+      return Utils.handleError(error, request, response);
     }
 
-    async getGlobalIdUserInfo(request, response) {
-        if (!request || !request.body)
-            throw Utils.handleError({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
+    return Utils.response(
+      response,
+      updateUserCookiesResponse,
+      apiSuccessMessage.USER_COOKIES_UPDATE_SUCCESS,
+      httpConstants.RESPONSE_STATUS.SUCCESS,
+      httpConstants.RESPONSE_CODES.OK
+    );
+  }
 
-        const [error, updateUserCookiesResponse] = await Utils.parseResponse(new BLManager().globalIdUserInfo(request.body));
-        if (error) {
-            return Utils.handleError(error, request, response);
-        }
+  async getGlobalIdUserInfo(request, response) {
+    if (!request || !request.body)
+      throw Utils.handleError(
+        {},
+        apiFailureMessage.INVALID_PARAMS,
+        httpConstants.RESPONSE_CODES.FORBIDDEN
+      );
 
-        return Utils.response(
-            response,
-            updateUserCookiesResponse,
-            apiSuccessMessage.FETCH_SUCCESS,
-            httpConstants.RESPONSE_STATUS.SUCCESS,
-            httpConstants.RESPONSE_CODES.OK
-        );
+    const [error, updateUserCookiesResponse] = await Utils.parseResponse(
+      new BLManager().globalIdUserInfo(request.body)
+    );
+    if (error) {
+      return Utils.handleError(error, request, response);
     }
 
-    async getGlobalIdTokens(request, response) {
-        if (!request || !request.query)
-            throw Utils.handleError({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
+    return Utils.response(
+      response,
+      updateUserCookiesResponse,
+      apiSuccessMessage.FETCH_SUCCESS,
+      httpConstants.RESPONSE_STATUS.SUCCESS,
+      httpConstants.RESPONSE_CODES.OK
+    );
+  }
 
-        const [error, updateUserCookiesResponse] = await Utils.parseResponse(new BLManager().getGlobalIdTokens(request.query));
-        if (error) {
-            return Utils.handleError(error, request, response);
-        }
+  async getGlobalIdTokens(request, response) {
+    if (!request || !request.query)
+      throw Utils.handleError(
+        {},
+        apiFailureMessage.INVALID_PARAMS,
+        httpConstants.RESPONSE_CODES.FORBIDDEN
+      );
 
-        return Utils.response(
-            response,
-            updateUserCookiesResponse,
-            apiSuccessMessage.FETCH_SUCCESS,
-            httpConstants.RESPONSE_STATUS.SUCCESS,
-            httpConstants.RESPONSE_CODES.OK
-        );
+    const [error, updateUserCookiesResponse] = await Utils.parseResponse(
+      new BLManager().getGlobalIdTokens(request.query)
+    );
+    if (error) {
+      return Utils.handleError(error, request, response);
     }
+
+    return Utils.response(
+      response,
+      updateUserCookiesResponse,
+      apiSuccessMessage.FETCH_SUCCESS,
+      httpConstants.RESPONSE_STATUS.SUCCESS,
+      httpConstants.RESPONSE_CODES.OK
+    );
+  }
 }
