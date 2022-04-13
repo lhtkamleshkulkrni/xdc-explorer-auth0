@@ -132,10 +132,11 @@ export default class UserController {
             throw Utils.handleError({}, apiFailureMessage.INVALID_PARAMS, httpConstants.RESPONSE_CODES.FORBIDDEN);
 
         const [error, updateUserCookiesResponse] = await Utils.parseResponse(new BLManager().updateCookiesOfUser(request.body));
+        Utils.lhtLog('Auth0-srv: Index', `update-user-cookies-res`, updateUserCookiesResponse, '', httpConstants.LOG_LEVEL_TYPE.INFO)
+        Utils.lhtLog('Auth0-srv: Index', `update-user-cookies-err`, error, '', httpConstants.LOG_LEVEL_TYPE.INFO)
         if (error) {
             return Utils.handleError(error, request, response);
         }
-        Utils.lhtLog('Auth0-srv: Index', `update-user-cookies`, updateUserCookiesResponse, '', httpConstants.LOG_LEVEL_TYPE.INFO)
         return Utils.response(
             response,
             updateUserCookiesResponse,
