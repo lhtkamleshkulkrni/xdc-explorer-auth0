@@ -243,7 +243,7 @@ export default class Manager {
                 !requestData.email
             )
                 throw apiFailureMessage.INVALID_PARAMS;
-            let user = await UserModel.findOne({email: requestData.email});
+            let user = await UserModel.findOne({email: requestData.email, authenticationProvider: "AUTH0"});
             if (!user) {
                 throw apiFailureMessage.USER_NOT_EXISTS;
             }
@@ -395,8 +395,7 @@ export default class Manager {
                 !requestData ||
                 Object.keys(requestData).length < 1 ||
                 !requestData.userId ||
-                !requestData.newPassword ||
-                !requestData.oldPassword
+                !requestData.newPassword
             )
                 throw apiFailureMessage.INVALID_PARAMS;
 
@@ -404,16 +403,15 @@ export default class Manager {
             if (!userDetails) {
                 throw apiFailureMessage.USER_NOT_EXISTS;
             }
-            try {
-                let req = {
-                    name: userDetails.name,
-                    password: requestData.oldPassword
-                }
-                let res = await this.signIn(req);
-                // await Utils.parseResponse(new BlManager().signIn(userDetails.email, requestData.oldPassword) );
-            } catch (error) {
-                throw `You have entered wrong current password`;
-            }
+            // try {
+            //     let req = {
+            //         name: userDetails.name,
+            //         password: requestData.oldPassword
+            //     }
+            //     let res = await this.signIn(req);
+            // } catch (error) {
+            //     throw `You have entered wrong current password`;
+            // }
 
             let accessToken = await this.getManagementAccessToken();
             accessToken = JSON.parse(accessToken)
